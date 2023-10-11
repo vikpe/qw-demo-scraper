@@ -1,5 +1,6 @@
 import os
 import subprocess
+from glob import glob
 
 import boto3
 from botocore.exceptions import ClientError
@@ -8,11 +9,10 @@ from dotenv import load_dotenv
 import database
 import hub
 from util import download_file
-from glob import glob
 
 load_dotenv()  # take environment variables from .env.
 
-LIMIT = 1
+LIMIT = 2
 
 
 def get_new_server_demos(limit: int) -> list[hub.HubDemo]:
@@ -56,7 +56,7 @@ def main():
     # upload to s3
     s3 = boto3.client("s3")
 
-    for zip_file_path in glob("demos/*/*.mvd.gz"):
+    for zip_file_path in glob("demos/*.mvd.gz"):
         try:
             s3.upload_file(zip_file_path, "quakeworld", zip_file_path)
         except ClientError as e:
