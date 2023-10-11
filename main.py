@@ -54,6 +54,7 @@ def main():
     #     print(info.filepath, info.duration, type(info.players[0].frags))
 
     # upload to s3
+    # todo: s3 manager download/delete
     s3 = boto3.client("s3")
 
     for zip_file_path in glob("demos/*.mvd.gz"):
