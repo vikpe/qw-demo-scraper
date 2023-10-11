@@ -1,4 +1,3 @@
-import os
 import subprocess
 from glob import glob
 
@@ -6,19 +5,17 @@ import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
-import database
-import hub
-from util import download_file
+from vendor import hub, supab
 
-load_dotenv()  # take environment variables from .env.
+load_dotenv()
 
-LIMIT = 2
+LIMIT = 1
 
 
-def get_new_server_demos(limit: int) -> list[hub.HubDemo]:
+def get_new_server_demos(limit: int) -> list[hub.Demo]:
     # demos from database
     # todo: optimize db call
-    db_filenames = [d.filename for d in database.get_demos()]
+    db_filenames = supab.get_demos_source_filenames()
 
     # demos from servers
     server_demos = hub.get_demos(limit)
@@ -37,10 +34,10 @@ def main():
 
     # download
     for demo in new_server_demos:
-        print(f"downloading {demo.filename} to demos/")
-        download_file(demo.download_url, os.path.join("demos", demo.filename))
+        print(f"downloading {demo.qtv_address} - {demo.filename}")
+        # download_file(demo.download_url, os.path.join("demos", demo.filename))
 
-    # parse, compress
+    # checksums, parse, compress
     subprocess.run(["bash", "scripts.sh"])
 
     # combine info
@@ -53,13 +50,23 @@ def main():
     #
     #     print(info.filepath, info.duration, type(info.players[0].frags))
 
+    checksums = get_sha256_per_filename()
+    print(checksums)
+
+    return
+
     # upload to s3
     # todo: s3 manager download/delete
     s3 = boto3.client("s3")
 
     for zip_file_path in glob("demos/*.mvd.gz"):
         try:
-            s3.upload_file(zip_file_path, "quakeworld", zip_file_path)
+            s3.upload_file(
+                zip_file_path,
+                "quakeworld",
+                zip_file_path,
+                ExtraArgs={"Metadata": {"sha256": "myvalue"}},
+            )
         except ClientError as e:
             print(e)
 
