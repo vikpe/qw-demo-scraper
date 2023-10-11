@@ -28,6 +28,20 @@ def get_new_server_demos(limit: int) -> list[hub.Demo]:
     return new_demos
 
 
+def get_sha256_per_filename() -> dict[str, str]:
+    with open("demos/demos.sha256") as fh:
+        lines = fh.readlines()
+
+    result = {}
+
+    for line in lines:
+        sha256, filename = line.strip().split("  ")
+        filename = filename.replace("demos/", "")
+        result[filename] = sha256
+
+    return result
+
+
 def main():
     # demos from database
     new_server_demos = get_new_server_demos(LIMIT)
