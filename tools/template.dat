@@ -1,0 +1,40 @@
+////////////////////////////////////////////////////////////
+#FILE json %demoname%.json
+
+#EVENT MATCHEND	6
+{
+  "filepath": "%demoname%",
+  "date": "%matchstartyear%-%matchstartmonth%-%matchstartdate% %matchstarthour%:%matchstartminute%",
+  "duration": "%demotime%",
+  "map": "%map%",
+  "serverinfo": "%serverinfo%",
+  "players": [
+#EVENT_END
+
+#EVENT MATCHEND_ALL 7
+    {
+      "name": "%name%",
+      "team": "%team%",
+      "top_color": %topcolor%,
+      "bottom_color": %bottomcolor%,
+      "frags": %frags%,
+      "teamkills": %teamkills%,
+      "deaths": %deaths%,
+      "suicides": %suicides%,
+      "avg_ping": "%avgping%"
+    }
+#EVENT_END
+
+#EVENT MATCHEND_ALL_BETWEEN 8
+    ,
+#EVENT_END
+
+#EVENT MATCHEND_FINAL 9
+  ]
+}
+#EVENT_END
+
+#OUTPUT 6 json
+#OUTPUT 7 json
+#OUTPUT 8 json
+#OUTPUT 9 json
