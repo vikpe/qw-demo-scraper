@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "qw-demo-updater"
+version = "0.1.0"
+description = ""
+authors = ["Viktor Persson <viktor.persson@arcsin.se>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+boto3 = "^1.28.62"
+supabase = "^1.2.0"
+requests = "^2.31.0"
+black = "^23.9.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
