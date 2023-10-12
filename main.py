@@ -4,8 +4,7 @@ import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
-from vendor import hub, supab
-from vendor.aws import upload_recent_demo
+from vendor import hub, supab, aws
 from vendor.util import download_file
 
 load_dotenv()
@@ -63,7 +62,7 @@ def main():
     for demo in new_server_demos:
         # upload to s3
         try:
-            upload_recent_demo(s3, demo, checksums[demo.filename])
+            aws.upload_recent_demo(s3, demo, checksums[demo.filename])
         except ClientError as e:
             print(e)
             continue
