@@ -1,11 +1,12 @@
 import subprocess
-from glob import glob
 
 import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
 from vendor import hub, supab
+from vendor.aws import upload_recent_demo
+from vendor.util import download_file
 
 load_dotenv()
 
@@ -49,40 +50,30 @@ def main():
     # download
     for demo in new_server_demos:
         print(f"downloading {demo.qtv_address} - {demo.filename}")
-        # download_file(demo.download_url, os.path.join("demos", demo.filename))
+        download_file(demo.download_url, f"demos/{demo.filename}")
 
     # checksums, parse, compress
     subprocess.run(["bash", "scripts.sh"])
-
-    # combine info
-    # for demo in new_server_demos:
-    #     pass
-    #
-    # # insert into database
-    # for info_path in glob("demos/*/*.mvd.json"):
-    #     info = mvdparser.from_file(info_path)
-    #
-    #     print(info.filepath, info.duration, type(info.players[0].frags))
-
     checksums = get_sha256_per_filename()
-    print(checksums)
-
-    return
 
     # upload to s3
     # todo: s3 manager download/delete
     s3 = boto3.client("s3")
 
-    for zip_file_path in glob("demos/*.mvd.gz"):
+    for demo in new_server_demos:
+        # upload to s3
         try:
-            s3.upload_file(
-                zip_file_path,
-                "quakeworld",
-                zip_file_path,
-                ExtraArgs={"Metadata": {"sha256": "myvalue"}},
-            )
+            upload_recent_demo(s3, demo, checksums[demo.filename])
         except ClientError as e:
             print(e)
+            continue
+
+        # insert into database
+        # combine info
+        # todo: info = mvdparser.from_file(info_path)
+
+    # post process
+    # todo: set event, map_number, map_count, next, prev etc
 
 
 if __name__ == "__main__":
