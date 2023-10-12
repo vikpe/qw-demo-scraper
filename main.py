@@ -10,8 +10,6 @@ from vendor.util import download_file
 
 load_dotenv()
 
-LIMIT = 1
-
 
 def clear_demo_dir():
     shutil.rmtree("demos")
