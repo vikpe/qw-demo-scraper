@@ -3,6 +3,14 @@ from typing import List
 
 import attr
 from cattr import structure
+from natsort import natsorted
+
+
+def parse_ping_str(value) -> int:
+    try:
+        return round(float(value))
+    except ValueError:
+        return 0
 
 
 @attr.define
@@ -15,7 +23,10 @@ class Player:
     teamkills: int = attr.ib()
     deaths: int = attr.ib()
     suicides: int = attr.ib()
-    avg_ping: float = attr.ib()
+    ping: str = attr.ib(converter=parse_ping_str)
+
+    def as_dict(self) -> dict:
+        return attr.asdict(self)
 
 
 @attr.define
@@ -26,6 +37,26 @@ class ParseResult:
     map: str = attr.ib()
     serverinfo: str = attr.ib()
     players: List[Player] = attr.ib()
+
+    def participants(self, mode) -> str:
+        if "ffa" == mode:
+            return str(len(self.players))
+
+        if "1on1" == mode:
+            participants = [p.name for p in self.players]
+        else:
+            teams = {}
+
+            for player in self.players:
+                teams.setdefault(player.team, []).append(player.name)
+
+            for team in teams:
+                natsorted(teams[team])
+
+            participants = [f'{team} ({", ".join(teams[team])})' for team in teams]
+
+        natsorted(participants)
+        return " vs ".join(participants)
 
 
 def from_file(filepath) -> ParseResult:
