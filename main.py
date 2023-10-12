@@ -64,9 +64,8 @@ def main():
     subprocess.run(["bash", "scripts.sh"])
     checksums = get_sha256_per_filename("demos/demos.sha256")
 
-    # upload to s3
-    # todo: s3 manager download/delete
-    s3 = boto3.client("s3")
+    # upload to s3, add to database
+    sb = supab.get_client()
 
     for demo in new_server_demos:
         # 1. upload to s3
@@ -76,10 +75,23 @@ def main():
             print(e)
             continue
 
-        # 2. combine info
-        # todo: info = mvdparser.from_file(info_path)
+        # 2. add to database
+        info = mvdparser.from_file(f"demos/{demo.filename}.json")
+        mode = demo.get_mode()
 
-        # 3. insert into database
+        db_entry = {
+            "sha256": sha256,
+            "source": demo.qtv_address,
+            "filename": demo.filename,  # 2023-10-12T11:44:00Z
+            "s3_key": s3_key,
+            "timestamp": demo.time,
+            "duration": info.duration,
+            "mode": mode,
+            "map": info.map,
+            "players": [p.as_dict() for p in info.players],
+            "title": info.participants(mode),
+        }
+        sb.from_("demos").insert(db_entry).execute()
 
     # 4. post process
     # todo: set event, map_number, map_count, next, prev etc
