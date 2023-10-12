@@ -43,7 +43,7 @@ class ParseResult:
             return str(len(self.players))
 
         if "1on1" == mode:
-            participants = [p.name for p in self.players]
+            participants = list(set([p.name for p in self.players]))
         else:
             teams = {}
 
@@ -51,7 +51,7 @@ class ParseResult:
                 teams.setdefault(player.team, []).append(player.name)
 
             for team in teams:
-                natsorted(teams[team])
+                natsorted(list(set(teams[team])))
 
             participants = [f'{team} ({", ".join(teams[team])})' for team in teams]
 
