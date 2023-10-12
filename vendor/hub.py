@@ -28,9 +28,12 @@ class Demo:
 
         return "unknown"
 
+    def get_hostname(self):
+        return self.qtv_address.split(":")[0]
 
-def get_demos(limit: int) -> List[Demo]:
-    url = f"http://hubapi.quakeworld.nu/v2/demos?qtv_address=quake.se&mode=duel&limit={limit}"
+
+def get_demos(mode: str, limit: int) -> List[Demo]:
+    url = f"http://hubapi.quakeworld.nu/v2/demos?mode={mode}&limit={limit}"
     res = requests.get(url).json()
 
     return [Demo(**demo) for demo in res]

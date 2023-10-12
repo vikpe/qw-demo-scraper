@@ -18,16 +18,21 @@ def clear_demo_dir():
     os.mkdir("demos")
 
 
-def get_new_server_demos(limit: int) -> list[hub.Demo]:
+def get_new_server_demos(mode: str, limit: int) -> list[hub.Demo]:
     # demos from database
     sb = supab.get_client()
     demos_query = (
-        sb.table("demos").select("filename").order("id", desc=True).limit(200).execute()
+        sb.table("demos")
+        .select("filename")
+        .eq("mode", mode)
+        .order("id", desc=True)
+        .limit(100)
+        .execute()
     )
     db_filenames = [demo["filename"] for demo in demos_query.data]
 
     # demos from servers
-    server_demos = hub.get_demos(limit)
+    server_demos = hub.get_demos(mode, limit)
     server_filenames = [d.filename for d in server_demos]
 
     # compare
@@ -51,11 +56,11 @@ def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
     return result
 
 
-def main():
+def update_demos(demo_mode: str, limit: int):
     clear_demo_dir()
 
     # download new demos
-    new_server_demos = get_new_server_demos(LIMIT)
+    new_server_demos = get_new_server_demos(demo_mode, limit)
 
     for demo in new_server_demos:
         print(f"downloading {demo.qtv_address} - {demo.filename}")
@@ -99,8 +104,8 @@ def main():
 
         db_entry = {
             "sha256": sha256,
-            "source": demo.qtv_address,
-            "filename": demo.filename,  # 2023-10-12T11:44:00Z
+            "source": demo.get_hostname(),
+            "filename": demo.filename,
             "s3_key": s3_key,
             "timestamp": demo.time,
             "duration": info.duration,
@@ -116,4 +121,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    update_demos("duel", 50)
+    update_demos("2on2", 15)
+    update_demos("4on4", 25)
