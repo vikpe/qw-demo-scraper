@@ -54,10 +54,9 @@ def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
 def main():
     clear_demo_dir()
 
-    # demos from database
+    # download new demos
     new_server_demos = get_new_server_demos(LIMIT)
 
-    # download
     for demo in new_server_demos:
         print(f"downloading {demo.qtv_address} - {demo.filename}")
         download_file(demo.download_url, f"demos/{demo.filename}")
