@@ -22,7 +22,7 @@ def get_new_server_demos(mode: str, limit: int) -> list[hub.Demo]:
     demos_query = (
         sb.table("demos")
         .select("filename")
-        .eq("mode", mode)
+        .eq("mode", mode if mode != "duel" else "1on1")
         .order("id", desc=True)
         .limit(100)
         .execute()
