@@ -28,8 +28,8 @@ def get_new_server_demos(limit: int) -> list[hub.Demo]:
     return new_demos
 
 
-def get_sha256_per_filename() -> dict[str, str]:
-    with open("demos/demos.sha256") as fh:
+def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
+    with open(sha_filepath) as fh:
         lines = fh.readlines()
 
     result = {}
@@ -53,25 +53,26 @@ def main():
 
     # checksums, parse, compress
     subprocess.run(["bash", "scripts.sh"])
-    checksums = get_sha256_per_filename()
+    checksums = get_sha256_per_filename("demos/demos.sha256")
 
     # upload to s3
     # todo: s3 manager download/delete
     s3 = boto3.client("s3")
 
     for demo in new_server_demos:
-        # upload to s3
+        # 1. upload to s3
         try:
             aws.upload_recent_demo(s3, demo, checksums[demo.filename])
         except ClientError as e:
             print(e)
             continue
 
-        # insert into database
-        # combine info
+        # 2. combine info
         # todo: info = mvdparser.from_file(info_path)
 
-    # post process
+        # 3. insert into database
+
+    # 4. post process
     # todo: set event, map_number, map_count, next, prev etc
 
 
