@@ -1,3 +1,5 @@
+import os
+import shutil
 import subprocess
 
 import boto3
@@ -10,6 +12,11 @@ from vendor.util import download_file
 load_dotenv()
 
 LIMIT = 1
+
+
+def clear_demo_dir():
+    shutil.rmtree("demos")
+    os.mkdir("demos")
 
 
 def get_new_server_demos(limit: int) -> list[hub.Demo]:
@@ -43,6 +50,8 @@ def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
 
 
 def main():
+    clear_demo_dir()
+
     # demos from database
     new_server_demos = get_new_server_demos(LIMIT)
 
