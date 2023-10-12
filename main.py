@@ -2,11 +2,10 @@ import os
 import shutil
 import subprocess
 
-import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
-from vendor import hub, supab, aws
+from vendor import hub, supab, aws, mvdparser
 from vendor.util import download_file
 
 load_dotenv()
@@ -21,8 +20,11 @@ def clear_demo_dir():
 
 def get_new_server_demos(limit: int) -> list[hub.Demo]:
     # demos from database
-    # todo: optimize db call
-    db_filenames = supab.get_demos_source_filenames()
+    sb = supab.get_client()
+    demos_query = (
+        sb.table("demos").select("filename").order("id", desc=True).limit(200).execute()
+    )
+    db_filenames = [demo["filename"] for demo in demos_query.data]
 
     # demos from servers
     server_demos = hub.get_demos(limit)
@@ -67,10 +69,27 @@ def main():
     # upload to s3, add to database
     sb = supab.get_client()
 
+    print(f"# found {len(new_server_demos)} new demos")
     for demo in new_server_demos:
+        info = mvdparser.from_file(f"demos/{demo.filename}.json")
+
+        if 0 == info.duration:  # game in progress
+            print(f"- skip (in progress): {demo.filename}")
+            continue
+
+        sha256 = checksums[demo.filename]
+        zip_filename = f"{demo.filename}.gz"
+        s3_key = f"qw/demos/recent/{zip_filename}"
+
         # 1. upload to s3
         try:
-            aws.upload_recent_demo(s3, demo, checksums[demo.filename])
+            zip_path = f"demos/{zip_filename}"
+            metadata = {
+                "sha256": sha256,
+                "qtv_address": demo.qtv_address,
+                "filename": demo.filename,
+            }
+            aws.upload(zip_path, s3_key, metadata)
         except ClientError as e:
             print(e)
             continue
