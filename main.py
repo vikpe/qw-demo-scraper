@@ -152,7 +152,7 @@ def prune_demos(mode: str, keep_count: int):
         sb.table("demos")
         .select("id, timestamp, s3_key", count=CountMethod.exact)
         .eq("mode", mode)
-        .order("timestamp", desc=False)
+        .order("timestamp", desc=True)
         .range(keep_count, keep_count + 500)
         .execute()
     )
