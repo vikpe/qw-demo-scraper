@@ -175,6 +175,6 @@ def prune_demos(mode: str, keep_count: int):
 
 
 if __name__ == "__main__":
-    update_demos("1on1", 150)
-    update_demos("4on4", 100)
+    update_demos("1on1", 200)
+    update_demos("4on4", 150)
     update_demos("2on2", 50)
