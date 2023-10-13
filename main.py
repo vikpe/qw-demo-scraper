@@ -24,7 +24,7 @@ def get_new_server_demos(mode: str, limit: int) -> list[hub.Demo]:
         .select("filename")
         .eq("mode", mode if mode != "duel" else "1on1")
         .order("id", desc=True)
-        .limit(100)
+        .limit(500)
         .execute()
     )
     db_filenames = [demo["filename"] for demo in demos_query.data]
