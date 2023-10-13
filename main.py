@@ -24,7 +24,7 @@ def get_new_server_demos(mode: str, limit: int) -> list[hub.Demo]:
         .select("filename")
         .eq("mode", mode if mode != "duel" else "1on1")
         .order("id", desc=True)
-        .limit(500)
+        .limit(200)
         .execute()
     )
     db_filenames = [demo["filename"] for demo in demos_query.data]
@@ -124,5 +124,5 @@ def update_demos(demo_mode: str, limit: int):
 
 if __name__ == "__main__":
     update_demos("duel", 50)
-    update_demos("2on2", 15)
-    update_demos("4on4", 25)
+    update_demos("2on2", 25)
+    update_demos("4on4", 50)
