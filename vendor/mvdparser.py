@@ -11,7 +11,7 @@ from natsort import humansorted
 def parse_ping_str(value) -> int:
     try:
         return round(float(value))
-    except ValueError:
+    except (ValueError, TypeError):
         return 0
 
 

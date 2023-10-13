@@ -8,7 +8,15 @@ def get_path(filename: str) -> str:
     return f"{test_path}/files/{filename}"
 
 
-def ztest_is_teamplay_mode():
+def test_parse_ping_str():
+    assert mvdparser.parse_ping_str(None) == 0
+    assert mvdparser.parse_ping_str("0") == 0
+    assert mvdparser.parse_ping_str("25") == 25
+    assert mvdparser.parse_ping_str("25.4") == 25
+    assert mvdparser.parse_ping_str("25.6") == 26
+
+
+def test_is_teamplay_mode():
     assert mvdparser.is_teamplay_mode("10on10")
     assert mvdparser.is_teamplay_mode("2on2")
     assert mvdparser.is_teamplay_mode("2on2on2")
