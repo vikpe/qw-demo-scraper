@@ -44,39 +44,47 @@ class ParseResult:
     serverinfo: str = attr.ib()
     players: List[Player] = attr.ib(converter=sort_players)
 
-    def participants(self, mode) -> dict:
-        result = {
-            "teams": [],
-            "players": [],
-            "player_count": len(self.players),
-        }
+    def teams(self) -> List[dict]:
+        teams = []
+        players_per_team = {}
+
+        for player in self.players:
+            if player.team not in players_per_team:
+                players_per_team[player.team] = []
+
+            players_per_team[player.team].append(player.as_dict())
+
+        for team, players in players_per_team.items():
+            player_colors = list((p["top_color"], p["bottom_color"]) for p in players)
+            top_color, bottom_color = get_team_color(player_colors)
+            team = {
+                "name": team,
+                "players": players,
+                "frags": sum([p["frags"] for p in players]),
+                "top_color": top_color,
+                "bottom_color": bottom_color,
+            }
+            teams.append(team)
+
+        return teams
+
+    def title(self, mode: str) -> str:
+        if "ffa" == mode:
+            return f'ffa: {", ".join([p.name for p in self.players])}'
 
         if is_teamplay_mode(mode):
-            players_per_team = {}
+            team_strings = []
 
-            for player in self.players:
-                if player.team not in players_per_team:
-                    players_per_team[player.team] = []
+            for team in self.teams():
+                players = ", ".join([p["name"] for p in team["players"]])
+                team_strings.append(f'{team["name"]} ({players})')
 
-                players_per_team[player.team].append(player.as_dict())
-
-            for team, players in players_per_team.items():
-                top_color, bottom_color = get_team_color(
-                    list((p["top_color"], p["bottom_color"]) for p in players)
-                )
-                team = {
-                    "name": team,
-                    "players": players,
-                    "frags": sum([p["frags"] for p in players]),
-                    "top_color": top_color,
-                    "bottom_color": bottom_color,
-                }
-                result["teams"].append(team)
-
+            participants = team_strings
         else:
-            result["players"] = [p.as_dict() for p in self.players]
+            participants = [p.name for p in self.players]
 
-        return result
+        delimiter = ", " if mode == "race" else " vs "
+        return delimiter.join(participants)
 
 
 def from_file(filepath) -> ParseResult:

@@ -102,15 +102,19 @@ def update_demos(demo_mode: str, limit: int):
 
         db_entry = {
             "sha256": sha256,
-            "source": demo.get_hostname(),
+            "source": demo.qtv_address,
             "filename": demo.filename,
             "s3_key": s3_key,
             "timestamp": demo.time,
             "duration": info.duration,
             "mode": mode,
             "map": info.map,
-            "players": [p.as_dict() for p in info.players],
-            "title": info.participants(mode),
+            "participants": {
+                "players": [p.as_dict() for p in info.players],
+                "teams": info.teams() if mvdparser.is_teamplay_mode(mode) else [],
+                "player_count": len(info.players),
+            },
+            "title": info.title(mode),
         }
         sb.from_("demos").insert(db_entry).execute()
 
