@@ -67,10 +67,10 @@ def add_new_demos(demo_mode: str, limit: int):
     new_server_demos = get_new_server_demos(demo_mode, limit)
 
     if not new_server_demos:
-        print(f"{demo_mode}: no new demos found")
+        print(f"\n{demo_mode}: no new demos found")
         return
 
-    print(f"{demo_mode}: found {len(new_server_demos)} new demos")
+    print(f"\n{demo_mode}: found {len(new_server_demos)} new demos")
 
     for demo in new_server_demos:
         print(f"downloading {demo.qtv_address} - {demo.filename}")
@@ -83,7 +83,6 @@ def add_new_demos(demo_mode: str, limit: int):
     # upload to s3, add to database
     sb = supab.get_client()
 
-    print(f"# found {len(new_server_demos)} new demos")
     for demo in new_server_demos:
         info = mvdparser.from_file(f"demos/{demo.filename}.json")
 
@@ -145,7 +144,7 @@ def prune_demos(mode: str, keep_count: int):
     ).count
 
     if current_count <= keep_count:
-        print(f"prune {mode} ({current_count}/{keep_count}): nothing to prune")
+        print(f"\nprune {mode} ({current_count}/{keep_count}): nothing to prune")
         return
 
     query = (
@@ -158,7 +157,7 @@ def prune_demos(mode: str, keep_count: int):
     )
 
     print(
-        f"prune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
+        f"\nprune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
     for d in query.data:
