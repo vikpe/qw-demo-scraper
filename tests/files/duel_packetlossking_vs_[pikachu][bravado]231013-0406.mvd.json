@@ -1,0 +1,31 @@
+{
+  "filepath": "../demos/duel_packetlossking_vs_[pikachu][bravado]231013-0406.mvd",
+  "date": "2023-10-13 4:7",
+  "duration": "610.214",
+  "map": "bravado",
+  "serverinfo": "\\maxfps\\77\\pm_ktjump\\1\\*version\\MVDSV 0.36-beta-antilag-r402\\*z_ext\\511\\*admin\\BLooD_DoG(D_P) <Discord>\\ktxver\\1.43-dev-r402\\maxspectators\\14\\sv_antilag\\1\\*gamedir\\qw\\timelimit\\10\\deathmatch\\3\\mode\\1on1\\*qvm\\so\\*progs\\so\\maxclients\\2\\map\\bravado",
+  "players": [
+    {
+      "name": "PacketLossKing",
+      "team": "blue",
+      "top_color": 13,
+      "bottom_color": 13,
+      "frags": 63,
+      "teamkills": 0,
+      "deaths": 15,
+      "suicides": 2,
+      "ping": "40.7059"
+    },
+    {
+      "name": "_pikachu_",
+      "team": "red",
+      "top_color": 4,
+      "bottom_color": 4,
+      "frags": 10,
+      "teamkills": 0,
+      "deaths": 68,
+      "suicides": 3,
+      "ping": "38.9951"
+    }
+  ]
+}
