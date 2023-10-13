@@ -31,7 +31,7 @@ class Demo:
 
 def get_demos(mode: str, limit: int) -> List[Demo]:
     mode_ = "duel" if mode == "1on1" else mode
-    url = f"http://hubapi.quakeworld.nu/v2/demos?mode={mode_}&limit={limit}"
+    url = f"https://hubapi.quakeworld.nu/v2/demos?mode={mode_}&limit={limit}"
     res = requests.get(url).json()
 
     return [Demo(**demo) for demo in res]
