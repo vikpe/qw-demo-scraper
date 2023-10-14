@@ -5,6 +5,7 @@ import subprocess
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from postgrest.types import CountMethod
+from postgrest.exceptions import APIError
 
 from vendor import hub, supab, aws, mvdparser, demo_calc
 from vendor.util import download_file
@@ -76,14 +77,16 @@ def add_missing_demos(demo_mode: str, keep_count: int):
     sb = supab.get_client()
 
     for demo in demos:
-        info = mvdparser.from_file(f"demos/{demo.filename}.json")
+        sha256 = checksums[demo.filename]
+        if supab.has_demo_by_sha256(sha256):
+            print(f"{demo.qtv_address} / {demo.filename} - skip (already exists)")
+            continue
 
+        info = mvdparser.from_file(f"demos/{demo.filename}.json")
         if 0 == info.duration:  # game in progress
             print(f"{demo.qtv_address} / {demo.filename} - skip (in progress)")
             continue
 
-        print()
-        sha256 = checksums[demo.filename]
         zip_filename = f"{demo.filename}.gz"
         s3_key = f"qw/demos/recent/{zip_filename}"
 
@@ -120,7 +123,12 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             },
             "title": info.title(mode),
         }
-        sb.from_("demos").insert(db_entry).execute()
+
+        try:
+            sb.from_("demos").insert(db_entry).execute()
+        except APIError as e:
+            print(e)
+            continue
 
     # 4. post process
     # todo: set event, map_number, map_count, next, prev etc

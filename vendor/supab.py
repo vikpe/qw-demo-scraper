@@ -29,6 +29,16 @@ def get_client() -> Client:
     return create_client(url, key)
 
 
+def has_demo_by_sha256(sha256: str) -> bool:
+    sb = get_client()
+    return (
+        sb.table("demos")
+        .select("count", count=CountMethod.exact)
+        .eq("sha256", sha256)
+        .execute()
+    ).count > 0
+
+
 def demo_count(mode: str) -> int:
     sb = get_client()
     return (
