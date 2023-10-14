@@ -1,4 +1,8 @@
-from context import server_info
+import context
+
+context.apply()
+
+from vendor import server_info
 
 
 def describe_from_string():

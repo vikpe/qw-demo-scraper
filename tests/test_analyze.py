@@ -1,5 +1,7 @@
-from context import analyze, mvdparser
-from vendor.analyze import min_duration_per_mode
+import context
+
+context.apply()
+from vendor import analyze, mvdparser
 
 human_player = mvdparser.Player(
     name="XantoM",

@@ -1,4 +1,9 @@
-from context import hub, demo_calc, supab
+import context
+
+context.apply()
+
+from vendor import hub, demo_calc, supab
+
 
 calc_missing = demo_calc.calc_missing_demos
 

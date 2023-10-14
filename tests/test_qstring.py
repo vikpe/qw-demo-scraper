@@ -1,4 +1,8 @@
-from context import qstring
+import context
+
+context.apply()
+
+from vendor import qstring
 
 
 def test_prefix():
