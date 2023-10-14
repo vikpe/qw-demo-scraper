@@ -88,7 +88,8 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         # persistently ignore demo?
-        reason_to_ignore = analyze.reason_to_ignore_demo(info)
+        mode = demo.get_mode()
+        reason_to_ignore = analyze.reason_to_ignore_demo(info, mode)
 
         if reason_to_ignore is not None:
             print(f"{demo.qtv_address} / {demo.filename} - ignore ({reason_to_ignore})")
@@ -112,9 +113,6 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         # 2. add to database
-        info = mvdparser.from_file(f"demos/{demo.filename}.json")
-        mode = demo.get_mode()
-
         db_entry = {
             "sha256": sha256,
             "source": demo.qtv_address,

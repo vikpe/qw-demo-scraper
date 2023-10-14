@@ -1,4 +1,5 @@
 from context import analyze, mvdparser
+from vendor.analyze import min_duration_per_mode
 
 human_player = mvdparser.Player(
     name="XantoM",
@@ -36,9 +37,31 @@ def describe_reason_to_ignore_demo():
             players=[human_player],
         )
 
-        # no bots
-        assert analyze.reason_to_ignore_demo(info) is None
+        assert analyze.reason_to_ignore_demo(info, "1on1") is None
 
-        # has bots
         info.players.append(bot_player)
-        assert analyze.reason_to_ignore_demo(info) == "has bots (: Timber)"
+        assert analyze.reason_to_ignore_demo(info, "1on1") == "has bots (: Timber)"
+
+    def test_probably_aborted():
+        info = analyze.ParseResult(
+            filepath="demo1.mvd",
+            date="",
+            duration=620,
+            map="",
+            serverinfo="",
+            players=[human_player],
+        )
+
+        assert analyze.reason_to_ignore_demo(info, "1on1") is None
+
+        info.duration = 72
+        assert (
+            analyze.reason_to_ignore_demo(info, "1on1")
+            == "probably aborted (1 minutes, 12 seconds)"
+        )
+
+        info.duration = 12
+        assert (
+            analyze.reason_to_ignore_demo(info, "1on1")
+            == "probably aborted (12 seconds)"
+        )
