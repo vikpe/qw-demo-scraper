@@ -86,6 +86,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             print(f"- skip (in progress)")
             continue
 
+        print()
         sha256 = checksums[demo.filename]
         zip_filename = f"{demo.filename}.gz"
         s3_key = f"qw/demos/recent/{zip_filename}"
