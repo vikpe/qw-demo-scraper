@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from postgrest.types import CountMethod
 
-from vendor import hub, supab, aws, mvdparser
+from vendor import hub, supab, aws, mvdparser, demo_calc
 from vendor.util import download_file
 
 load_dotenv()
@@ -17,28 +17,20 @@ def clear_demo_dir():
     os.mkdir("demos")
 
 
-def get_new_server_demos(mode: str, limit: int) -> list[hub.Demo]:
-    # demos from database
-    sb = supab.get_client()
-    demos_query = (
-        sb.table("demos")
-        .select("filename")
+def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
+    # demos in database
+    db_demos = (
+        supab.get_client()
+        .table("demos")
+        .select("filename, timestamp")
         .eq("mode", mode)
         .order("timestamp", desc=True)
-        .limit(200)
         .execute()
-    )
-    db_filenames = [demo["filename"] for demo in demos_query.data]
+    ).data
+    db_demos = [supab.Demo(**demo) for demo in db_demos]
+    server_demos = hub.get_demos(mode, keep_count)
 
-    # demos from servers
-    server_demos = hub.get_demos(mode, limit)
-    server_filenames = [d.filename for d in server_demos]
-
-    # compare
-    new_filenames = list(set(server_filenames) - set(db_filenames))
-    new_demos = [d for d in server_demos if d.filename in new_filenames]
-
-    return new_demos
+    return demo_calc.calc_missing_demos(db_demos, server_demos, keep_count)
 
 
 def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
@@ -55,25 +47,25 @@ def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
     return result
 
 
-def update_demos(mode: str, limit: int):
-    add_new_demos(mode, limit)
-    prune_demos(mode, keep_count=limit)
+def update_demos(mode: str, keep_count: int):
+    add_missing_demos(mode, keep_count)
+    prune_demos(mode, keep_count)
 
 
-def add_new_demos(demo_mode: str, limit: int):
+def add_missing_demos(demo_mode: str, keep_count: int):
     clear_demo_dir()
 
-    # download new demos
-    new_server_demos = get_new_server_demos(demo_mode, limit)
+    # download missing
+    demos = get_missing_demos(demo_mode, keep_count)
 
-    if not new_server_demos:
-        print(f"\n{demo_mode}: no new demos found")
+    if not demos:
+        print(f"\nadd missing {demo_mode}: no demos found")
         return
 
-    print(f"\n{demo_mode}: found {len(new_server_demos)} new demos")
+    print(f"\nadd missing {demo_mode}: found {len(demos)} demos")
 
-    for demo in new_server_demos:
-        print(f"downloading {demo.qtv_address} - {demo.filename}")
+    for index, demo in enumerate(demos):
+        print(f"({index+1}) downloading {demo.qtv_address} - {demo.filename}")
         download_file(demo.download_url, f"demos/{demo.filename}")
 
     # checksums, parse, compress
@@ -83,7 +75,7 @@ def add_new_demos(demo_mode: str, limit: int):
     # upload to s3, add to database
     sb = supab.get_client()
 
-    for demo in new_server_demos:
+    for demo in demos:
         info = mvdparser.from_file(f"demos/{demo.filename}.json")
 
         if 0 == info.duration:  # game in progress
@@ -155,26 +147,27 @@ def prune_demos(mode: str, keep_count: int):
         .range(keep_count, keep_count + 500)
         .execute()
     )
+    demos = [supab.Demo(**demo) for demo in query.data]
 
     print(
         f"\nprune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
-    for d in query.data:
-        print(f"deleting {d['s3_key']} with id {d['id']} from {d['timestamp']}")
+    for demo in demos:
+        print(f"deleting {demo.s3_key} with id {demo.id} from {demo.timestamp}")
 
         # 1. delete from s3
         try:
-            aws.delete(d["s3_key"])
+            aws.delete(demo.s3_key)
         except ClientError as e:
             print(e)
             continue
 
         # 2. delete from database
-        sb.from_("demos").delete().eq("id", d["id"]).execute()
+        sb.from_("demos").delete().eq("id", demo.id).execute()
 
 
 if __name__ == "__main__":
-    update_demos("1on1", 200)
+    update_demos("1on1", 250)
     update_demos("4on4", 150)
     update_demos("2on2", 50)

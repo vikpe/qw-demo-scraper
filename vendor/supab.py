@@ -1,5 +1,5 @@
 import os
-from typing import Optional, List
+from typing import Optional
 
 import attr
 from supabase import create_client, Client
@@ -7,18 +7,19 @@ from supabase import create_client, Client
 
 @attr.define
 class Demo:
-    sha256: str = attr.ib()
-    source: str = attr.ib()
-    filename: str = attr.ib()
-    s3_key: str = attr.ib()
-    timestamp: str = attr.ib()
-    duration: float = attr.ib()
-    mode: str = attr.ib()
-    map: str = attr.ib()
-    title: str = attr.ib()
-    players: List[dict] = attr.ib()
     id: Optional[int] = attr.ib(default=0)
-    created_at: Optional[str] = attr.ib(default=None)
+    sha256: Optional[str] = attr.ib(default="")
+    source: Optional[str] = attr.ib(default="")
+    filename: Optional[str] = attr.ib(default="")
+    s3_key: Optional[str] = attr.ib(default="")
+    timestamp: Optional[str] = attr.ib(default="")
+    duration: Optional[float] = attr.ib(default=0.0)
+    mode: Optional[str] = attr.ib(default="")
+    map: Optional[str] = attr.ib(default="")
+    title: Optional[str] = attr.ib(default="")
+    participants: Optional[dict] = attr.ib(default={})
+    fts: Optional[str] = attr.ib(default="")
+    created_at: Optional[str] = attr.ib(default="")
 
 
 def get_client() -> Client:
