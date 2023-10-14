@@ -8,9 +8,9 @@ def test_prefix():
     assert qstring.get_prefix(["••••alpha", "••••beta"]) == "••••"
     assert qstring.get_prefix(["••alpha", "••beta"]) == "••"
     assert qstring.get_prefix(["dc•alpha", "dc•alphabet"]) == "dc•"
-    assert qstring.get_prefix([".alpha", ".beta"]) == ""
+    assert qstring.get_prefix([".alpha", ".beta"]) == "."
     assert qstring.get_prefix(["::: alpha", ":::    beta"]) == "::: "
-    assert qstring.get_prefix(["---a", "---"]) == ""
+    assert qstring.get_prefix(["---a", "---"]) == "---"
 
 
 def test_suffix():
@@ -20,8 +20,8 @@ def test_suffix():
     assert qstring.get_suffix(["alpha••••", "beta••••"]) == "••••"
     assert qstring.get_suffix(["alpha••", "beta••"]) == "••"
     assert qstring.get_suffix(["alpha•dc", "alphabet•dc"]) == "•dc"
-    assert qstring.get_suffix(["alpha.", "beta."]) == ""
-    assert qstring.get_suffix(["a---", "---"]) == ""
+    assert qstring.get_suffix(["alpha.", "beta."]) == "."
+    assert qstring.get_suffix(["a---", "---"]) == "---"
     assert qstring.get_suffix(["alpha :::", "beta     :::"]) == " :::"
 
 

@@ -9,16 +9,23 @@ def strip_fixes(names: List[str]) -> List[str]:
     if len(names) < 2:
         return names
 
-    if any(len(name) < MIN_FIX_LENGTH for name in names):
+    name_lengths = [len(name) for name in names]
+    if any(len_ < MIN_FIX_LENGTH for len_ in name_lengths):
         return names
 
     prefix = get_prefix(names)
-    if prefix:
-        names = [name[len(prefix) :] for name in names]
+    prefix_len = len(prefix)
+    if prefix_len >= MIN_FIX_LENGTH and not any(
+        [plen <= prefix_len for plen in name_lengths]
+    ):
+        names = [name[prefix_len:] for name in names]
 
     suffix = get_suffix(names)
-    if suffix:
-        names = [name[: -len(suffix)] for name in names]
+    suffix_len = len(suffix)
+    if suffix_len >= MIN_FIX_LENGTH and not any(
+        [slen <= suffix_len for slen in name_lengths]
+    ):
+        names = [name[:-suffix_len] for name in names]
 
     return [n.strip() for n in names]
 
@@ -30,16 +37,7 @@ def get_prefix(names: List[str]) -> str:
     if delimiter_index == -1:
         return ""
 
-    prefix = prefix[0 : delimiter_index + 1]
-    prefix_length = len(prefix)
-
-    if prefix_length < MIN_FIX_LENGTH:
-        return ""
-
-    if any([len(name) <= prefix_length for name in names]):
-        return ""
-
-    return prefix[: delimiter_index + 1]
+    return prefix[0 : delimiter_index + 1]
 
 
 def get_suffix(names: List[str]) -> str:
