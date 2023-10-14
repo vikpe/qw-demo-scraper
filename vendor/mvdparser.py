@@ -81,8 +81,11 @@ class ParseResult:
             team_strings = []
 
             for team in self.teams():
-                players = ", ".join([p["name"] for p in team["players"]])
-                team_strings.append(f'{team["name"]} ({players})')
+                stripped_names = qstring.strip_fixes(
+                    [p["name"] for p in team["players"]]
+                )
+                player_names = ", ".join(humansorted(stripped_names))
+                team_strings.append(f'{team["name"]} ({player_names})')
 
             participants = team_strings
         else:
