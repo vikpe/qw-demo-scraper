@@ -25,14 +25,7 @@ bot_player = mvdparser.Player(
 )
 
 
-def describe_reason_to_skip_demo():
-    def test_game_in_progress():
-        info = analyze.ParseResult(
-            filepath="demo1.mvd", date="", duration=0, map="", serverinfo="", players=[]
-        )
-
-        assert analyze.reason_to_skip_demo(info) == "game in progress"
-
+def describe_reason_to_ignore_demo():
     def test_has_bots():
         info = analyze.ParseResult(
             filepath="demo1.mvd",
@@ -44,8 +37,8 @@ def describe_reason_to_skip_demo():
         )
 
         # no bots
-        assert analyze.reason_to_skip_demo(info) is None
+        assert analyze.reason_to_ignore_demo(info) is None
 
         # has bots
         info.players.append(bot_player)
-        assert analyze.reason_to_skip_demo(info) == "has bots"
+        assert analyze.reason_to_ignore_demo(info) == "has bots (: Timber)"
