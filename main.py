@@ -126,21 +126,15 @@ def add_missing_demos(demo_mode: str, keep_count: int):
 
 
 def prune_demos(mode: str, keep_count: int):
-    sb = supab.get_client()
-
-    current_count = (
-        sb.table("demos")
-        .select("count", count=CountMethod.exact)
-        .eq("mode", mode)
-        .execute()
-    ).count
+    current_count = supab.demo_count(mode)
 
     if current_count <= keep_count:
         print(f"\nprune {mode} ({current_count}/{keep_count}): nothing to prune")
         return
 
     query = (
-        sb.table("demos")
+        supab.get_client()
+        .table("demos")
         .select("id, timestamp, s3_key", count=CountMethod.exact)
         .eq("mode", mode)
         .order("timestamp", desc=True)
@@ -164,7 +158,7 @@ def prune_demos(mode: str, keep_count: int):
             continue
 
         # 2. delete from database
-        sb.from_("demos").delete().eq("id", demo.id).execute()
+        supab.delete_demo(demo.id)
 
 
 if __name__ == "__main__":

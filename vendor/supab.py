@@ -2,6 +2,7 @@ import os
 from typing import Optional
 
 import attr
+from postgrest.types import CountMethod
 from supabase import create_client, Client
 
 
@@ -26,3 +27,18 @@ def get_client() -> Client:
     url: str = os.environ.get("SUPABASE_URL")
     key: str = os.environ.get("SUPABASE_KEY")
     return create_client(url, key)
+
+
+def demo_count(mode: str) -> int:
+    sb = get_client()
+    return (
+        sb.table("demos")
+        .select("count", count=CountMethod.exact)
+        .eq("mode", mode)
+        .execute()
+    ).count
+
+
+def delete_demo(demo_id: int):
+    sb = get_client()
+    return sb.from_("demos").delete().eq("id", demo_id).execute()
