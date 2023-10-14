@@ -7,6 +7,8 @@ import attr
 from cattr import structure
 from natsort import humansorted
 
+from vendor import qstring
+
 
 def parse_ping_str(value) -> int:
     try:
@@ -55,10 +57,13 @@ class ParseResult:
             players_per_team[player.team].append(player.as_dict())
 
         for team, players in players_per_team.items():
+            player_names = [p["name"] for p in players]
             player_colors = list((p["top_color"], p["bottom_color"]) for p in players)
             top_color, bottom_color = get_team_color(player_colors)
             team = {
                 "name": team,
+                "player_prefix": qstring.get_prefix(player_names),
+                "player_suffix": qstring.get_suffix(player_names),
                 "players": players,
                 "frags": sum([p["frags"] for p in players]),
                 "top_color": top_color,

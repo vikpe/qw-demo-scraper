@@ -41,6 +41,8 @@ def describe_parse_result():
         assert parse_result.teams() == [
             {
                 "name": "blue",
+                "player_prefix": "",
+                "player_suffix": "",
                 "players": [
                     {
                         "name": "Dadi",
@@ -71,9 +73,11 @@ def describe_parse_result():
             },
             {
                 "name": "red",
+                "player_prefix": "",
+                "player_suffix": "",
                 "players": [
                     {
-                        "name": "en_karl",
+                        "name": "ToT_en_karl",
                         "team": "red",
                         "top_color": 4,
                         "bottom_color": 4,
@@ -105,14 +109,14 @@ def describe_parse_result():
         def test_ffa():
             file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
             info = mvdparser.from_file(file_path)
-            assert info.title("ffa") == "ffa: Dadi, en_karl, ToT_Belgarath, xaan"
+            assert info.title("ffa") == "ffa: Dadi, ToT_en_karl, ToT_Belgarath, xaan"
 
         def test_xonx():
             file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
             info = mvdparser.from_file(file_path)
             assert (
                 info.title("2on2")
-                == "blue (Dadi, xaan) vs red (en_karl, ToT_Belgarath)"
+                == "blue (Dadi, xaan) vs red (ToT_en_karl, ToT_Belgarath)"
             )
 
         def test_1on1():
@@ -125,4 +129,4 @@ def describe_parse_result():
         def test_race():
             file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
             info = mvdparser.from_file(file_path)
-            assert info.title("race") == "Dadi, en_karl, ToT_Belgarath, xaan"
+            assert info.title("race") == "Dadi, ToT_en_karl, ToT_Belgarath, xaan"
