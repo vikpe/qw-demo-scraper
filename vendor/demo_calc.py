@@ -6,8 +6,10 @@ from . import hub, supab
 def calc_missing_demos(
     db_demos: List[supab.Demo], server_demos: List[hub.Demo], keep_count: int
 ):
-    if not db_demos:
-        return server_demos
+    if not server_demos:
+        return []
+    elif not db_demos:
+        return server_demos[:keep_count]
 
     db_filenames = [demo.filename for demo in db_demos]
 

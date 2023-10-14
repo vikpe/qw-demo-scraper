@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import attr
 import requests
@@ -6,11 +6,11 @@ import requests
 
 @attr.define
 class Demo:
-    qtv_address: str = attr.ib()
-    time: str = attr.ib()
-    filename: str = attr.ib()
-    download_url: str = attr.ib()
-    qtvplay_url: str = attr.ib()
+    qtv_address: Optional[str] = attr.ib(default="")
+    time: Optional[str] = attr.ib(default="")
+    filename: Optional[str] = attr.ib(default="")
+    download_url: Optional[str] = attr.ib(default="")
+    qtvplay_url: Optional[str] = attr.ib(default="")
 
     def get_mode(self) -> str:
         if self.filename.startswith("duel_"):
