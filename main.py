@@ -105,7 +105,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         # 2. add to database
-        info = mvdparser.ParseResult.from_file(f"demos/{demo.filename}.json")
+        info = mvdparser.from_file(f"demos/{demo.filename}.json")
         mode = demo.get_mode()
 
         db_entry = {
