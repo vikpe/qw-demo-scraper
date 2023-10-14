@@ -65,11 +65,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
     print(f"\nadd missing {demo_mode}: found {len(demos)} demos")
 
     for index, demo in enumerate(demos):
-        print(
-            f"({index+1}) downloading {demo.qtv_address} - {demo.filename}",
-            end=" ",
-            flush=True,
-        )
+        print(f"({index+1}) downloading {demo.qtv_address} - {demo.filename}")
         download_file(demo.download_url, f"demos/{demo.filename}")
 
     # checksums, parse, compress
@@ -83,7 +79,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
         info = mvdparser.from_file(f"demos/{demo.filename}.json")
 
         if 0 == info.duration:  # game in progress
-            print(f"- skip (in progress)")
+            print(f"{demo.qtv_address} / {demo.filename} - skip (in progress)")
             continue
 
         print()
