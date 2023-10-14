@@ -19,17 +19,16 @@ def clear_demo_dir():
 
 
 def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
-    # demos in database
-    db_demos = (
-        supab.get_client()
-        .table("demos")
-        .select("filename, timestamp")
-        .eq("mode", mode)
-        .order("timestamp", desc=True)
-        .execute()
-    ).data
-    db_demos = [supab.Demo(**demo) for demo in db_demos]
-    server_demos = hub.get_demos(mode, keep_count)
+    # from database
+    db_demos = supab.get_existing_demos(mode)
+    ignored_filenames = supab.get_ignored_filenames()
+
+    # from server
+    server_demos = [
+        demo
+        for demo in hub.get_demos(mode, keep_count)
+        if demo.filename not in ignored_filenames
+    ]
 
     return demo_calc.calc_missing_demos(db_demos, server_demos, keep_count)
 
@@ -77,16 +76,23 @@ def add_missing_demos(demo_mode: str, keep_count: int):
     sb = supab.get_client()
 
     for demo in demos:
+        # skip demo?
         sha256 = checksums[demo.filename]
         if supab.has_demo_by_sha256(sha256):
             print(f"{demo.qtv_address} / {demo.filename} - skip (already exists)")
             continue
 
         info = mvdparser.from_file(f"demos/{demo.filename}.json")
-        reason_to_skip = analyze.reason_to_skip_demo(info)
+        if 0 == info.duration:
+            print(f"{demo.qtv_address} / {demo.filename} - skip (game in progress)")
+            continue
 
-        if reason_to_skip is not None:
-            print(f"{demo.qtv_address} / {demo.filename} - skip ({reason_to_skip})")
+        # persistently ignore demo?
+        reason_to_ignore = analyze.reason_to_ignore_demo(info)
+
+        if reason_to_ignore is not None:
+            print(f"{demo.qtv_address} / {demo.filename} - ignore ({reason_to_ignore})")
+            supab.ignore_demo(demo.filename, sha256, reason_to_ignore)
             continue
 
         zip_filename = f"{demo.filename}.gz"

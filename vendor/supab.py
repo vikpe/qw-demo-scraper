@@ -2,6 +2,7 @@ import os
 from typing import Optional
 
 import attr
+from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 from supabase import create_client, Client
 
@@ -23,6 +24,15 @@ class Demo:
     created_at: Optional[str] = attr.ib(default="")
 
 
+@attr.define
+class IgnoredDemo:
+    id: Optional[int] = attr.ib(default=0)
+    sha256: Optional[str] = attr.ib(default="")
+    filename: Optional[str] = attr.ib(default="")
+    reason: Optional[str] = attr.ib(default="")
+    created_at: Optional[str] = attr.ib(default="")
+
+
 def get_client() -> Client:
     url: str = os.environ.get("SUPABASE_URL")
     key: str = os.environ.get("SUPABASE_KEY")
@@ -37,6 +47,36 @@ def has_demo_by_sha256(sha256: str) -> bool:
         .eq("sha256", sha256)
         .execute()
     ).count > 0
+
+
+def ignore_demo(filename: str, sha256: str, reason: str):
+    try:
+        sb = get_client()
+        return (
+            sb.table("ignored_demos")
+            .insert({"filename": filename, "sha256": sha256, "reason": reason})
+            .execute()
+        )
+    except APIError as e:
+        print(e)
+
+
+def get_existing_demos(mode: str) -> list[Demo]:
+    sb = get_client()
+    db_demos_query = (
+        sb.table("demos")
+        .select("filename, timestamp")
+        .eq("mode", mode)
+        .order("timestamp", desc=True)
+        .execute()
+    )
+    return [Demo(**demo) for demo in db_demos_query.data]
+
+
+def get_ignored_filenames() -> list[str]:
+    sb = get_client()
+    query = sb.table("ignored_demos").select("filename").execute()
+    return [IgnoredDemo(**demo).filename for demo in query.data]
 
 
 def demo_count(mode: str) -> int:
