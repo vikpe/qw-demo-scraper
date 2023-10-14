@@ -86,10 +86,10 @@ class ParseResult:
         delimiter = ", " if mode == "race" else " vs "
         return delimiter.join(participants)
 
-
-def from_file(filepath) -> ParseResult:
-    with open(filepath) as f:
-        return structure(json.load(f), ParseResult)
+    @classmethod
+    def from_file(cls, filepath) -> "ParseResult":
+        with open(filepath) as f:
+            return structure(json.load(f), cls)
 
 
 def is_teamplay_mode(mode: str) -> bool:
