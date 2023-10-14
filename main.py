@@ -4,10 +4,10 @@ import subprocess
 
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
-from postgrest.types import CountMethod
 from postgrest.exceptions import APIError
+from postgrest.types import CountMethod
 
-from vendor import hub, supab, aws, mvdparser, demo_calc
+from vendor import analyze, hub, supab, aws, mvdparser, demo_calc
 from vendor.util import download_file
 
 load_dotenv()
@@ -83,8 +83,10 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         info = mvdparser.from_file(f"demos/{demo.filename}.json")
-        if 0 == info.duration:  # game in progress
-            print(f"{demo.qtv_address} / {demo.filename} - skip (in progress)")
+        reason_to_skip = analyze.reason_to_skip_demo(info)
+
+        if reason_to_skip is not None:
+            print(f"{demo.qtv_address} / {demo.filename} - skip ({reason_to_skip})")
             continue
 
         zip_filename = f"{demo.filename}.gz"
