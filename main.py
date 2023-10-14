@@ -65,7 +65,11 @@ def add_missing_demos(demo_mode: str, keep_count: int):
     print(f"\nadd missing {demo_mode}: found {len(demos)} demos")
 
     for index, demo in enumerate(demos):
-        print(f"({index+1}) downloading {demo.qtv_address} - {demo.filename}", end=" ")
+        print(
+            f"({index+1}) downloading {demo.qtv_address} - {demo.filename}",
+            end=" ",
+            flush=True,
+        )
         download_file(demo.download_url, f"demos/{demo.filename}")
 
     # checksums, parse, compress
