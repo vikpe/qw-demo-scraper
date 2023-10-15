@@ -30,6 +30,6 @@
   * [x] game in progress
   * [x] already in database
 * [x] Ignore demos
-  * [ ] with bots
+  * [x] with bots
   * [x] where game is breaked/aborted
-  * [ ] with non-standard settings (dmm4 etc)
+  * [x] with non-standard settings (dmm4 etc)
