@@ -21,7 +21,7 @@ def clear_demo_dir():
 
 def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     # from database
-    db_demos = supab.get_existing_demos_by_mode(mode)
+    db_demos = supab.get_demos_by_mode(mode)
     ignored_filenames = supab.get_ignored_filenames_by_mode(mode)
 
     # from server

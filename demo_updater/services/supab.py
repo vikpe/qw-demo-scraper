@@ -71,7 +71,7 @@ def ignore_demo(mode: str, filename: str, sha256: str, reason: str):
         print(e)
 
 
-def get_existing_demos_by_mode(mode: str) -> list[Demo]:
+def get_demos_by_mode(mode: str) -> list[Demo]:
     sb = get_client()
     db_demos_query = (
         sb.table("demos")
