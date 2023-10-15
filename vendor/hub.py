@@ -13,20 +13,12 @@ class Demo:
     qtvplay_url: Optional[str] = attr.ib(default="")
 
     def get_mode(self) -> str:
-        if self.filename.startswith("duel_"):
+        if "_" not in self.filename:
+            return "unknown"
+        elif self.filename.startswith("duel_"):
             return "1on1"
-
-        known_modes = [
-            "2on2",
-            "ffa",
-            "4on4",
-        ]
-
-        for mode in known_modes:
-            if self.filename.startswith(f"{mode}_"):
-                return mode
-
-        return "unknown"
+        else:
+            return self.filename.split("_")[0]
 
 
 def get_demos(mode: str, limit: int) -> List[Demo]:
