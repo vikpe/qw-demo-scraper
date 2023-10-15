@@ -2,12 +2,16 @@
 > Downloads demos from QTVs, uploads to file storage and stores info in database
 
 ## Process
-1. Check QTVs for demos
+1. Check QTVs for recent demos
 2. Compare to demos already in database
-4. Upload demo to file storage
-5. Parse info
-6. Add info to database
-7. Prune old demos
+3. Upload demo to file storage
+4. Parse and add info to database
+5. Prune old demos
+
+## Stack
+* **File storage**: AWS S3
+* **Database**: [supabase](https://supabase.com/)
+* **Languages**: python + shell scripts
 
 ## TODO
 * [x] Download recent demos
