@@ -12,7 +12,7 @@ human_player = mvdparser.Player(
     teamkills=0,
     deaths=2,
     suicides=1,
-    ping="16",
+    ping=16,
 )
 
 bot_player = mvdparser.Player(
@@ -24,13 +24,13 @@ bot_player = mvdparser.Player(
     teamkills=0,
     deaths=1,
     suicides=2,
-    ping="10",
+    ping=10,
 )
 
 
 def describe_reason_to_ignore_demo():
     def test_has_bots():
-        info = analyze.ParseResult(
+        info = analyze.Result(
             filepath="demo1.mvd",
             date="",
             duration=610,
@@ -45,7 +45,7 @@ def describe_reason_to_ignore_demo():
         assert analyze.reason_to_ignore_demo(info, "1on1") == "has bots (: Timber)"
 
     def test_probably_aborted():
-        info = analyze.ParseResult(
+        info = analyze.Result(
             filepath="demo1.mvd",
             date="",
             duration=620,
