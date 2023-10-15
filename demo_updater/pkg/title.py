@@ -1,7 +1,7 @@
 from natsort import humansorted
 
-from pkg import qmode
-from pkg.mvdparser import Team
+from demo_updater.pkg import qmode
+from demo_updater.pkg.mvdparser import Team
 
 
 def from_mode_and_players(mode, players) -> str:

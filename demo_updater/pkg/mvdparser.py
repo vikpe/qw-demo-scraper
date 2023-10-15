@@ -4,7 +4,7 @@ from typing import List, Tuple
 from typing import Optional
 
 import attr
-from cattr import structure
+from cattrs import structure
 from natsort import humansorted
 
 from demo_updater.pkg import qstring

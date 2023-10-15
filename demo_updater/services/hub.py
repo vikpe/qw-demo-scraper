@@ -2,6 +2,7 @@ from typing import List, Optional
 
 import attr
 import requests
+from cattrs import structure
 
 
 @attr.define
@@ -26,7 +27,7 @@ def get_demos(mode: str, limit: int) -> List[Demo]:
         mode_ = "duel" if mode == "1on1" else mode
         url = f"https://hubapi.quakeworld.nu/v2/demos?mode={mode_}&limit={limit}"
         res = requests.get(url).json()
-        return [Demo(**demo) for demo in res]
+        return [structure(demo, Demo) for demo in res] if isinstance(res, list) else []
     except Exception as e:
         print(e)
         return []

@@ -25,7 +25,7 @@ def describe_get_demos():
         responses.get(
             url="https://hubapi.quakeworld.nu/v2/demos",
             match=[matchers.query_param_matcher({"mode": "duel", "limit": 2})],
-            json=["error"],
+            json="error",
         )
         assert hub.get_demos("1on1", 2) == []
 

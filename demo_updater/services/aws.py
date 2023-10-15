@@ -1,8 +1,6 @@
 import os
-import boto3
-from dotenv import load_dotenv
 
-load_dotenv()
+import boto3
 
 
 def upload(filepath: str, key: str, metadata=None):
