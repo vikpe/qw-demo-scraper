@@ -1,4 +1,4 @@
-from .mvdparser import Player, MvdInfo
+from pkg.mvdparser import Player, MvdInfo
 
 
 def reason_to_ignore_demo(info: MvdInfo) -> str | None:

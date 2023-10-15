@@ -1,8 +1,9 @@
-from natsort import humansorted
 import re
 
-from demo_updater.pkg import qstring
-from demo_updater.pkg.mvdparser import Team
+from natsort import humansorted
+
+from pkg import qstring
+from pkg.mvdparser import Team
 
 
 def title(self) -> str:
