@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 
-from vendor import analyze, hub, supab, aws, mvdparser, demo_calc
-from vendor.util import download_file
+from vendor import analyze, hub, supab, aws, mvdparser, demo_calc, util
 
 load_dotenv()
 
@@ -63,10 +62,10 @@ def add_missing_demos(demo_mode: str, keep_count: int):
         return
 
     print(f"\nadd missing {demo_mode}: found {len(demos)} demos")
-
-    for index, demo in enumerate(demos):
-        print(f"({index+1}) downloading {demo.qtv_address} - {demo.filename}")
-        download_file(demo.download_url, f"demos/{demo.filename}")
+    util.download_files_to_dir_in_parallel(
+        [demo.download_url for demo in demos],
+        "demos",
+    )
 
     # checksums, parse, compress
     subprocess.run(["bash", "process_demos.sh"])
