@@ -1,5 +1,5 @@
 # QuakeWorld Demo Scraper
-> Downloads demos from QTVs, uploads to file storage and stores parsed info in database
+> Downloads demos from QTVs, uploads to file storage and stores info in database
 
 ## Process
 1. Check QTVs for demos
