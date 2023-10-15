@@ -69,7 +69,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
         download_file(demo.download_url, f"demos/{demo.filename}")
 
     # checksums, parse, compress
-    subprocess.run(["bash", "scripts.sh"])
+    subprocess.run(["bash", "process_demos.sh"])
     checksums = get_sha256_per_filename("demos/demos.sha256")
 
     # upload to s3, add to database
