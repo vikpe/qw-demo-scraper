@@ -1,5 +1,5 @@
-# QuakeWorld Demo Updater
-> Downloads demos from QTVs, uploads to AWS S3 and stores info in database
+# QuakeWorld Demo Scraper
+> Downloads demos from QTVs, uploads to file storage and stores parsed info in database
 
 ## Process
 1. Check QTVs for demos
