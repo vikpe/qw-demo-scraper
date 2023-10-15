@@ -16,9 +16,6 @@ class Participants:
     teams: Optional[List[Team]] = attr.ib(default=[])
     player_count: Optional[int] = attr.ib(default=0)
 
-    # def as_dict(self) -> dict:
-    #     return attr.asdict(self)
-
 
 @attr.define
 class Demo:
@@ -33,8 +30,20 @@ class Demo:
     map: Optional[str] = attr.ib(default="")
     title: Optional[str] = attr.ib(default="")
     participants: Optional[Participants] = attr.ib(default=Participants())
-    fts: Optional[str] = attr.ib(default="")
-    created_at: Optional[str] = attr.ib(default="")
+
+
+@attr.define
+class NewDemo:
+    sha256: str = attr.ib()
+    source: str = attr.ib()
+    filename: str = attr.ib()
+    s3_key: str = attr.ib()
+    timestamp: str = attr.ib()
+    duration: float = attr.ib()
+    mode: str = attr.ib()
+    map: str = attr.ib()
+    title: str = attr.ib()
+    participants: Participants = attr.ib()
 
     def as_dict(self) -> dict:
         return attr.asdict(self)
@@ -48,6 +57,14 @@ class IgnoredDemo:
     filename: Optional[str] = attr.ib(default="")
     reason: Optional[str] = attr.ib(default="")
     created_at: Optional[str] = attr.ib(default="")
+
+
+@attr.define
+class NewIgnoredDemo:
+    sha256: str = attr.ib()
+    mode: str = attr.ib()
+    filename: str = attr.ib()
+    reason: str = attr.ib()
 
     def as_dict(self) -> dict:
         return attr.asdict(self)
@@ -69,12 +86,12 @@ def has_demo_by_sha256(sha256: str) -> bool:
     ).count > 0
 
 
-def add_demo(demo: Demo):
+def add_demo(demo: NewDemo):
     sb = get_client()
     return sb.table("demos").insert(demo.as_dict()).execute()
 
 
-def ignore_demo(demo: IgnoredDemo):
+def ignore_demo(demo: NewIgnoredDemo):
     try:
         sb = get_client()
         return sb.table("ignored_demos").insert(demo.as_dict()).execute()

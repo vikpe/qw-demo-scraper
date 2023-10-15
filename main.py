@@ -1,21 +1,24 @@
-import json
 import os
 import shutil
 import subprocess
 
 from botocore.exceptions import ClientError
-from cattrs import structure
 from dotenv import load_dotenv
 from postgrest.exceptions import APIError
 
-from demo_updater.pkg import analyze, mvdparser, net, title, qmode
-from demo_updater.pkg import demo_calc
-from demo_updater.services import supab, hub, aws
+from demo_updater.pkg import analyze, mvdparser, net, title, qmode, demo_calc
+from demo_updater.pkg.checksum import get_sha256_per_filename
+from demo_updater.services import aws, hub, supab
 
 
 def clear_demo_dir():
     shutil.rmtree("demos")
     os.mkdir("demos")
+
+
+def update_demos(mode: str, keep_count: int):
+    add_missing_demos(mode, keep_count)
+    prune_demos(mode, keep_count)
 
 
 def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
@@ -31,25 +34,6 @@ def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     ]
 
     return demo_calc.calc_missing_demos(db_demos, server_demos, keep_count)
-
-
-def get_sha256_per_filename(sha_filepath) -> dict[str, str]:
-    with open(sha_filepath) as fh:
-        lines = fh.readlines()
-
-    result = {}
-
-    for line in lines:
-        sha256, filename = line.strip().split("  ")
-        filename = filename.replace("demos/", "")
-        result[filename] = sha256
-
-    return result
-
-
-def update_demos(mode: str, keep_count: int):
-    add_missing_demos(mode, keep_count)
-    prune_demos(mode, keep_count)
 
 
 def add_missing_demos(demo_mode: str, keep_count: int):
@@ -90,7 +74,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
 
         if reason_to_ignore is not None:
             print(f"{demo.qtv_address} / {demo.filename} - ignore ({reason_to_ignore})")
-            ignored_demo = supab.IgnoredDemo(
+            ignored_demo = supab.NewIgnoredDemo(
                 sha256=sha256,
                 mode=demo.get_mode(),
                 filename=demo.filename,
@@ -116,11 +100,10 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         # 2. add to database
-        # TODO: FIXME
         mode = demo.get_mode()
         is_teamplay = info.serverinfo.teamplay in [1, 2] or qmode.is_teamplay(mode)
 
-        db_demo = supab.Demo(
+        db_demo = supab.NewDemo(
             sha256=sha256,
             source=demo.qtv_address,
             filename=demo.filename,
@@ -143,9 +126,6 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             print(e)
             continue
 
-    # 4. post process
-    # todo: set event, map_number, map_count, next, prev etc
-
 
 def prune_demos(mode: str, keep_count: int):
     current_count = supab.get_demo_count_by_mode(mode)
@@ -158,42 +138,29 @@ def prune_demos(mode: str, keep_count: int):
         f"\nprune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
-    demos = supab.get_demos_to_prune(mode, keep_count)
-    for demo in demos:
+    for demo in supab.get_demos_to_prune(mode, keep_count):
         print(f"deleting {demo.s3_key} with id {demo.id} from {demo.timestamp}")
+        delete_demo(demo.id, demo.s3_key)
 
-        # 1. delete from s3
-        try:
-            aws.delete(demo.s3_key)
-        except ClientError as e:
-            print(e)
-            continue
 
-        # 2. delete from database (if s3 deletion is successful)
-        supab.delete_demo(demo.id)
+def delete_demo(demo_id: int, demo_s3_key: str):
+    # 1. delete from s3
+    try:
+        aws.delete(demo_s3_key)
+    except ClientError as e:
+        print(e)
+        return
+
+    # 2. delete from database (if s3 deletion is successful)
+    supab.delete_demo(demo_id)
 
 
 def main():
     load_dotenv()
 
-    query = (
-        supab.get_client()
-        .table("demos")
-        .select("*")
-        .eq("mode", "1on1")
-        .order("timestamp", desc=True)
-        .limit(1)
-        .execute()
-    )
-    demos = [structure(demo, supab.Demo) for demo in query.data]
-
-    for demo in demos:
-        for player in demo.participants.players:
-            print(player.name, player.frags)
-
-    # update_demos("1on1", 250)
-    # update_demos("4on4", 150)
-    # update_demos("2on2", 50)
+    update_demos("1on1", 250)
+    update_demos("4on4", 150)
+    update_demos("2on2", 50)
 
 
 if __name__ == "__main__":

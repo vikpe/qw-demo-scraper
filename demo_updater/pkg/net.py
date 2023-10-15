@@ -7,6 +7,7 @@ import requests
 
 
 def download_file(url: str, dest_filepath: str) -> str:
+    print("- downloading", url)
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         with open(dest_filepath, "wb") as f:
