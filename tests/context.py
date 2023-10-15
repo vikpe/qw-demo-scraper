@@ -10,3 +10,8 @@ def apply():
 
     lib_dir = os.path.join(parent_dir, "demo_updater")
     sys.path.insert(0, lib_dir)
+
+
+def get_testfile_path(filename: str) -> str:
+    test_path = os.path.abspath(os.path.dirname(__file__))
+    return f"{test_path}/files/{filename}"

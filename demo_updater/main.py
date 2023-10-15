@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 
-from pkg import analyze, mvdparser, util
+from pkg import analyze, mvdparser, net, qtitle, qmode
 from pkg import demo_calc
 from services import supab, hub, aws
 
@@ -64,7 +64,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
         return
 
     print(f"\nadd missing {demo_mode}: found {len(demos)} demos")
-    util.download_files_to_dir_in_parallel(
+    net.download_files_to_dir_in_parallel(
         [demo.download_url for demo in demos],
         "demos",
     )
@@ -118,6 +118,8 @@ def add_missing_demos(demo_mode: str, keep_count: int):
         # 2. add to database
         # TODO: FIXME
         mode = demo.get_mode()
+        is_teamplay = info.serverinfo.teamplay in [1, 2] or qmode.is_teamplay(mode)
+
         db_demo = supab.Demo(
             sha256=sha256,
             source=demo.qtv_address,
@@ -127,10 +129,16 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             duration=info.duration,
             mode=mode,
             map=info.map,
-            title=info.title(demo_mode),
+            title=qtitle.title(mode, info.players),
             participants={
-                "players": [p.as_dict() for p in info.players],
-                "teams": info.teams() if mvdparser.is_teamplay_mode(mode) else [],
+                "players": [p.as_dict() for p in info.players]
+                if not is_teamplay
+                else [],
+                "teams": [
+                    t.as_dict() for t in mvdparser.Team.from_players(info.players)
+                ]
+                if is_teamplay
+                else [],
                 "player_count": len(info.players),
             },
         )

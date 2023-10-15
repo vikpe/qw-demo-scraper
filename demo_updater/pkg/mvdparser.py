@@ -63,13 +63,23 @@ class Team:
         ]
 
     def to_string(self, strip_fixes=False):
-        player_names = [p.name for p in self.players]
+        names = [p.name for p in self.players]
 
         if strip_fixes:
-            player_names = qstring.strip_fixes(player_names)
+            names = qstring.strip_fixes(names)
 
-        player_name_list = ", ".join(humansorted(player_names))
-        return f"{self.name} ({player_name_list})"
+        name_list = ", ".join(humansorted(names))
+        return f"{self.name} ({name_list})"
+
+    def as_dict(self) -> dict:
+        (top_color, bottom_color) = self.get_color()
+        return {
+            "name": self.name,
+            "top_color": top_color,
+            "bottom_color": bottom_color,
+            "frags": self.get_frags(),
+            "players": [p.as_dict() for p in self.players],
+        }
 
     def get_frags(self) -> int:
         return sum([p.frags for p in self.players])

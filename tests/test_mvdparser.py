@@ -1,6 +1,5 @@
-import os
-
 import context
+from context import get_testfile_path
 from pkg.server_info import ServerInfo
 
 context.apply()
@@ -14,28 +13,12 @@ from pkg.mvdparser import (
 )
 
 
-def get_path(filename: str) -> str:
-    test_path = os.path.abspath(os.path.dirname(__file__))
-    return f"{test_path}/files/{filename}"
-
-
 def test_parse_ping_str():
     assert to_int(None) == 0
     assert to_int("0") == 0
     assert to_int("25") == 25
     assert to_int("25.4") == 25
     assert to_int("25.6") == 26
-
-
-# def ztest_is_teamplay_mode():
-#     assert is_teamplay_mode("10on10")
-#     assert is_teamplay_mode("2on2")
-#     assert is_teamplay_mode("2on2on2")
-#     assert is_teamplay_mode("4on4")
-#     assert is_teamplay_mode("ctf")
-#     assert is_teamplay_mode("wipeout")
-#     assert not is_teamplay_mode("1on1")
-#     assert not is_teamplay_mode("ffa")
 
 
 def test_get_team_color():
@@ -46,6 +29,45 @@ def test_get_team_color():
 
 
 def describe_team():
+    def test_as_dict():
+        team = Team(
+            name="red",
+            players=[
+                Player(name="alpha", team="red", top_color=4, bottom_color=2, frags=7),
+                Player(name="beta", team="red", top_color=4, bottom_color=2, frags=5),
+            ],
+        )
+        assert team.as_dict() == {
+            "name": "red",
+            "top_color": 4,
+            "bottom_color": 2,
+            "frags": 12,
+            "players": [
+                {
+                    "name": "alpha",
+                    "team": "red",
+                    "top_color": 4,
+                    "bottom_color": 2,
+                    "frags": 7,
+                    "deaths": 0,
+                    "suicides": 0,
+                    "teamkills": 0,
+                    "ping": 0,
+                },
+                {
+                    "name": "beta",
+                    "team": "red",
+                    "top_color": 4,
+                    "bottom_color": 2,
+                    "frags": 5,
+                    "deaths": 0,
+                    "suicides": 0,
+                    "teamkills": 0,
+                    "ping": 0,
+                },
+            ],
+        }
+
     def test_from_players():
         teams = Team.from_players(
             [
@@ -90,9 +112,37 @@ def describe_team():
         assert teams[0].to_string(strip_fixes=True) == "red (alpha, beta)"
 
 
+def describe_player():
+    def test_as_dict():
+        player = Player(
+            name="beta",
+            team="red",
+            top_color=4,
+            bottom_color=2,
+            frags=1,
+            teamkills=2,
+            deaths=3,
+            suicides=4,
+            ping=5,
+        )
+        assert player.as_dict() == {
+            "name": "beta",
+            "team": "red",
+            "top_color": 4,
+            "bottom_color": 2,
+            "frags": 1,
+            "teamkills": 2,
+            "deaths": 3,
+            "suicides": 4,
+            "ping": 5,
+        }
+
+
 def describe_mvd_info():
     def test_from_file():
-        file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
+        file_path = get_testfile_path(
+            "2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json"
+        )
         info = MvdInfo.from_file(file_path)
 
         assert info.filepath == "2on2_blue_vs_red[aerowalk]20231012-2359.mvd"
@@ -168,31 +218,3 @@ def describe_mvd_info():
                 ping=13,
             ),
         ]
-
-
-#   def zdescribe_to_title():
-#       def test_ffa():
-#           file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-#           info = Result.from_file(file_path)
-#           info.serverinfo.mode = "ffa"
-#           assert info.title() == "ffa: Dadi, ToT_Belgarath, ToT_en_karl, xaan"
-
-#       def test_xonx():
-#           file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-#           info = Result.from_file(file_path)
-#           info.serverinfo.mode = "2on2"
-#           assert info.title() == "blue (Dadi, xaan) vs red (Belgarath, en_karl)"
-
-#       def test_1on1():
-#           file_path = get_path(
-#               "duel_packetlossking_vs_[pikachu][bravado]231013-0406.mvd.json"
-#           )
-#           info = Result.from_file(file_path)
-#           info.serverinfo.mode = "1on1"
-#           assert info.title() == "_pikachu_ vs PacketLossKing"
-
-#       def test_race():
-#           file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-#           info = Result.from_file(file_path)
-#           info.serverinfo.mode = "race"
-#           assert info.title() == "Dadi, ToT_Belgarath, ToT_en_karl, xaan"
