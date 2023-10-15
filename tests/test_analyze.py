@@ -1,7 +1,7 @@
 import context
 
 context.apply()
-from vendor import analyze, mvdparser
+from pkg import analyze, mvdparser
 
 human_player = mvdparser.Player(
     name="XantoM",
@@ -30,40 +30,48 @@ bot_player = mvdparser.Player(
 
 def describe_reason_to_ignore_demo():
     def test_has_bots():
-        info = analyze.Result(
+        info = analyze.MvdInfo(
             filepath="demo1.mvd",
             date="",
             duration=610,
             map="",
-            serverinfo="",
+            serverinfo=r"\mode\1on1",
             players=[human_player],
         )
 
-        assert analyze.reason_to_ignore_demo(info, "1on1") is None
+        assert analyze.reason_to_ignore_demo(info) is None
 
         info.players.append(bot_player)
-        assert analyze.reason_to_ignore_demo(info, "1on1") == "has bots (: Timber)"
+        assert analyze.reason_to_ignore_demo(info) == "has bots (: Timber)"
 
     def test_probably_aborted():
-        info = analyze.Result(
+        info = analyze.MvdInfo(
             filepath="demo1.mvd",
             date="",
             duration=620,
             map="",
-            serverinfo="",
+            serverinfo=r"\mode\1on1",
             players=[human_player],
         )
 
-        assert analyze.reason_to_ignore_demo(info, "1on1") is None
+        assert analyze.reason_to_ignore_demo(info) is None
 
         info.duration = 72
         assert (
-            analyze.reason_to_ignore_demo(info, "1on1")
+            analyze.reason_to_ignore_demo(info)
             == "probably aborted (1 minutes, 12 seconds)"
         )
 
         info.duration = 12
-        assert (
-            analyze.reason_to_ignore_demo(info, "1on1")
-            == "probably aborted (12 seconds)"
+        assert analyze.reason_to_ignore_demo(info) == "probably aborted (12 seconds)"
+
+    def test_dmm4():
+        info = analyze.MvdInfo(
+            filepath="demo1.mvd",
+            date="",
+            duration=620,
+            map="",
+            serverinfo=r"\mode\1on1\deathmatch\4",
+            players=[human_player],
         )
+        assert analyze.reason_to_ignore_demo(info) == "dmm4"

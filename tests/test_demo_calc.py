@@ -2,8 +2,8 @@ import context
 
 context.apply()
 
-from vendor import hub, demo_calc, supab
-
+from services import supab, hub
+from pkg import demo_calc
 
 calc_missing = demo_calc.calc_missing_demos
 

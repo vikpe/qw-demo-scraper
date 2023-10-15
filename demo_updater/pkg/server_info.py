@@ -17,6 +17,7 @@ class ServerInfo:
     gamedir: Optional[str | None] = attr.ib(default=None)
     ktxver: Optional[str | None] = attr.ib(default=None)
     map: Optional[str | None] = attr.ib(default=None)
+    matchtag: Optional[str | None] = attr.ib(default=None)
     maxclients: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
     maxfps: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
     maxspectators: Optional[int | None] = attr.ib(
@@ -33,9 +34,6 @@ class ServerInfo:
     version: Optional[str | None] = attr.ib(default=None)
     z_ext: Optional[str | None] = attr.ib(default=None)
 
-    def as_dict(self) -> dict:
-        return attr.asdict(self)
-
     @classmethod
     def from_string(cls, serverinfo: str) -> "ServerInfo":
         parts = serverinfo.lstrip("\\").split("\\")
@@ -49,6 +47,7 @@ class ServerInfo:
             gamedir=info.get("gamedir", None),
             ktxver=info.get("ktxver", None),
             map=info.get("map", None),
+            matchtag=info.get("matchtag", None),
             maxclients=info.get("maxclients", None),
             maxfps=info.get("maxfps", None),
             maxspectators=info.get("maxspectators", None),
@@ -63,3 +62,6 @@ class ServerInfo:
             version=info.get("version", None),
             z_ext=info.get("z_ext", None),
         )
+
+    def as_dict(self) -> dict:
+        return attr.asdict(self)

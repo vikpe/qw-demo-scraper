@@ -23,6 +23,9 @@ class Demo:
     fts: Optional[str] = attr.ib(default="")
     created_at: Optional[str] = attr.ib(default="")
 
+    def as_dict(self) -> dict:
+        return attr.asdict(self)
+
 
 @attr.define
 class IgnoredDemo:
@@ -49,19 +52,21 @@ def has_demo_by_sha256(sha256: str) -> bool:
     ).count > 0
 
 
-def ignore_demo(filename: str, sha256: str, reason: str):
+def ignore_demo(mode: str, filename: str, sha256: str, reason: str):
     try:
         sb = get_client()
         return (
             sb.table("ignored_demos")
-            .insert({"filename": filename, "sha256": sha256, "reason": reason})
+            .insert(
+                {"mode": mode, "filename": filename, "sha256": sha256, "reason": reason}
+            )
             .execute()
         )
     except APIError as e:
         print(e)
 
 
-def get_existing_demos(mode: str) -> list[Demo]:
+def get_existing_demos_by_mode(mode: str) -> list[Demo]:
     sb = get_client()
     db_demos_query = (
         sb.table("demos")
@@ -73,13 +78,13 @@ def get_existing_demos(mode: str) -> list[Demo]:
     return [Demo(**demo) for demo in db_demos_query.data]
 
 
-def get_ignored_filenames() -> list[str]:
+def get_ignored_filenames_by_mode(mode: str) -> list[str]:
     sb = get_client()
-    query = sb.table("ignored_demos").select("filename").execute()
+    query = sb.table("ignored_demos").select("filename").eq("mode", mode).execute()
     return [IgnoredDemo(**demo).filename for demo in query.data]
 
 
-def demo_count(mode: str) -> int:
+def demo_count_by_mode(mode: str) -> int:
     sb = get_client()
     return (
         sb.table("demos")

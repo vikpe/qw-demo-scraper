@@ -1,14 +1,16 @@
-from .mvdparser import Player, ParseResult
+from .mvdparser import Player, MvdInfo
 
 
-def reason_to_ignore_demo(info: ParseResult, mode: str) -> str | None:
+def reason_to_ignore_demo(info: MvdInfo) -> str | None:
     bot_names = get_bot_names(info.players)
-
     if bot_names:
         return f"has bots ({', '.join(bot_names)})"
 
-    if info.duration < min_duration_per_mode(mode):
+    if info.duration < min_duration_per_mode(info.serverinfo.mode):
         return f"probably aborted ({format_duration(info.duration)})"
+
+    if info.serverinfo.deathmatch == 4:
+        return f"dmm4"
 
     return None
 

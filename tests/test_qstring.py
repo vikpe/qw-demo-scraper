@@ -2,7 +2,7 @@ import context
 
 context.apply()
 
-from vendor import qstring
+from pkg import qstring
 
 
 def test_prefix():

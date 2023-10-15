@@ -1,6 +1,6 @@
 from typing import List
 
-from . import hub, supab
+from services import supab, hub
 
 
 def calc_missing_demos(

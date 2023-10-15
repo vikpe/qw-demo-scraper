@@ -7,20 +7,22 @@ from dotenv import load_dotenv
 from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 
-from vendor import analyze, hub, supab, aws, mvdparser, demo_calc, util
+from pkg import analyze, mvdparser, util
+from pkg import demo_calc
+from services import supab, hub, aws
 
 load_dotenv()
 
 
 def clear_demo_dir():
-    shutil.rmtree("demos")
-    os.mkdir("demos")
+    shutil.rmtree("../demos")
+    os.mkdir("../demos")
 
 
 def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     # from database
-    db_demos = supab.get_existing_demos(mode)
-    ignored_filenames = supab.get_ignored_filenames()
+    db_demos = supab.get_existing_demos_by_mode(mode)
+    ignored_filenames = supab.get_ignored_filenames_by_mode(mode)
 
     # from server
     server_demos = [
@@ -69,7 +71,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
 
     # checksums, parse, compress
     subprocess.run(["bash", "process_demos.sh"])
-    checksums = get_sha256_per_filename("demos/demos.sha256")
+    checksums = get_sha256_per_filename("../demos/demos.sha256")
 
     # upload to s3, add to database
     sb = supab.get_client()
@@ -81,18 +83,22 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             print(f"{demo.qtv_address} / {demo.filename} - skip (already exists)")
             continue
 
-        info = mvdparser.from_file(f"demos/{demo.filename}.json")
+        info = mvdparser.MvdInfo.from_file(f"demos/{demo.filename}.json")
         if 0 == info.duration:
             print(f"{demo.qtv_address} / {demo.filename} - skip (game in progress)")
             continue
 
         # persistently ignore demo?
-        mode = demo.get_mode()
-        reason_to_ignore = analyze.reason_to_ignore_demo(info, mode)
+        reason_to_ignore = analyze.reason_to_ignore_demo(info)
 
         if reason_to_ignore is not None:
             print(f"{demo.qtv_address} / {demo.filename} - ignore ({reason_to_ignore})")
-            supab.ignore_demo(demo.filename, sha256, reason_to_ignore)
+            supab.ignore_demo(
+                mode=demo.get_mode(),
+                filename=demo.filename,
+                sha256=sha256,
+                reason=reason_to_ignore,
+            )
             continue
 
         zip_filename = f"{demo.filename}.gz"
@@ -112,25 +118,27 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         # 2. add to database
-        db_entry = {
-            "sha256": sha256,
-            "source": demo.qtv_address,
-            "filename": demo.filename,
-            "s3_key": s3_key,
-            "timestamp": demo.time,
-            "duration": info.duration,
-            "mode": mode,
-            "map": info.map,
-            "participants": {
+        # TODO: FIXME
+        mode = demo.get_mode()
+        db_demo = supab.Demo(
+            sha256=sha256,
+            source=demo.qtv_address,
+            filename=demo.filename,
+            s3_key=s3_key,
+            timestamp=demo.time,
+            duration=info.duration,
+            mode=mode,
+            map=info.map,
+            title=info.title(demo_mode),
+            participants={
                 "players": [p.as_dict() for p in info.players],
                 "teams": info.teams() if mvdparser.is_teamplay_mode(mode) else [],
                 "player_count": len(info.players),
             },
-            "title": info.title(mode),
-        }
+        )
 
         try:
-            sb.from_("demos").insert(db_entry).execute()
+            sb.from_("demos").insert(db_demo.as_dict()).execute()
         except APIError as e:
             print(e)
             continue
@@ -140,7 +148,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
 
 
 def prune_demos(mode: str, keep_count: int):
-    current_count = supab.demo_count(mode)
+    current_count = supab.demo_count_by_mode(mode)
 
     if current_count <= keep_count:
         print(f"\nprune {mode} ({current_count}/{keep_count}): nothing to prune")
