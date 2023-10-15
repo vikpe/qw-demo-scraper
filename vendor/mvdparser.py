@@ -8,9 +8,10 @@ from cattr import structure
 from natsort import humansorted
 
 from vendor import qstring
+from vendor.server_info import ServerInfo
 
 
-def parse_ping_str(value) -> int:
+def to_int(value: any) -> int:
     try:
         return round(float(value))
     except (ValueError, TypeError):
@@ -31,19 +32,19 @@ class Player:
     teamkills: int = attr.ib()
     deaths: int = attr.ib()
     suicides: int = attr.ib()
-    ping: str = attr.ib(converter=parse_ping_str)
+    ping: float = attr.ib(converter=to_int)
 
     def as_dict(self) -> dict:
         return attr.asdict(self)
 
 
 @attr.define
-class ParseResult:
+class Result:
     filepath: str = attr.ib()
     date: str = attr.ib()
     duration: float = attr.ib()
     map: str = attr.ib()
-    serverinfo: str = attr.ib()
+    serverinfo = attr.ib(converter=ServerInfo.from_string)
     players: List[Player] = attr.ib(converter=sort_players)
 
     def teams(self) -> List[dict]:
@@ -94,10 +95,10 @@ class ParseResult:
         delimiter = ", " if mode == "race" else " vs "
         return delimiter.join(participants)
 
-
-def from_file(filepath) -> ParseResult:
-    with open(filepath) as f:
-        return structure(json.load(f), ParseResult)
+    @classmethod
+    def from_file(cls, filepath) -> "Result":
+        with open(filepath) as f:
+            return structure(json.load(f), cls)
 
 
 def is_teamplay_mode(mode: str) -> bool:

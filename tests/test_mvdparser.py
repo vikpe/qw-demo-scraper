@@ -13,11 +13,11 @@ def get_path(filename: str) -> str:
 
 
 def test_parse_ping_str():
-    assert mvdparser.parse_ping_str(None) == 0
-    assert mvdparser.parse_ping_str("0") == 0
-    assert mvdparser.parse_ping_str("25") == 25
-    assert mvdparser.parse_ping_str("25.4") == 25
-    assert mvdparser.parse_ping_str("25.6") == 26
+    assert mvdparser.to_int(None) == 0
+    assert mvdparser.to_int("0") == 0
+    assert mvdparser.to_int("25") == 25
+    assert mvdparser.to_int("25.4") == 25
+    assert mvdparser.to_int("25.6") == 26
 
 
 def test_is_teamplay_mode():
@@ -41,7 +41,7 @@ def test_get_team_color():
 def describe_parse_result():
     def test_teams():
         file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-        parse_result = mvdparser.ParseResult.from_file(file_path)
+        parse_result = mvdparser.Result.from_file(file_path)
         assert parse_result.teams() == [
             {
                 "name": "blue",
@@ -112,22 +112,26 @@ def describe_parse_result():
     def describe_to_title():
         def test_ffa():
             file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-            info = mvdparser.ParseResult.from_file(file_path)
-            assert info.title("ffa") == "ffa: Dadi, ToT_Belgarath, ToT_en_karl, xaan"
+            info = mvdparser.Result.from_file(file_path)
+            info.serverinfo.mode = "ffa"
+            assert info.title() == "ffa: Dadi, ToT_Belgarath, ToT_en_karl, xaan"
 
         def test_xonx():
             file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-            info = mvdparser.ParseResult.from_file(file_path)
-            assert info.title("2on2") == "blue (Dadi, xaan) vs red (Belgarath, en_karl)"
+            info = mvdparser.Result.from_file(file_path)
+            info.serverinfo.mode = "2on2"
+            assert info.title() == "blue (Dadi, xaan) vs red (Belgarath, en_karl)"
 
         def test_1on1():
             file_path = get_path(
                 "duel_packetlossking_vs_[pikachu][bravado]231013-0406.mvd.json"
             )
-            info = mvdparser.ParseResult.from_file(file_path)
-            assert info.title("1on1") == "_pikachu_ vs PacketLossKing"
+            info = mvdparser.Result.from_file(file_path)
+            info.serverinfo.mode = "1on1"
+            assert info.title() == "_pikachu_ vs PacketLossKing"
 
         def test_race():
             file_path = get_path("2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json")
-            info = mvdparser.ParseResult.from_file(file_path)
-            assert info.title("race") == "Dadi, ToT_Belgarath, ToT_en_karl, xaan"
+            info = mvdparser.Result.from_file(file_path)
+            info.serverinfo.mode = "race"
+            assert info.title() == "Dadi, ToT_Belgarath, ToT_en_karl, xaan"
