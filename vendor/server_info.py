@@ -3,7 +3,7 @@ from typing import Optional
 import attr
 
 
-def to_int(value: any) -> int | None:
+def to_int_or_none(value: any) -> int | None:
     try:
         return int(value)
     except (ValueError, TypeError):
@@ -13,21 +13,23 @@ def to_int(value: any) -> int | None:
 @attr.define
 class ServerInfo:
     admin: Optional[str | None] = attr.ib(default=None)
-    deathmatch: Optional[int | None] = attr.ib(default=None, converter=to_int)
+    deathmatch: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
     gamedir: Optional[str | None] = attr.ib(default=None)
     ktxver: Optional[str | None] = attr.ib(default=None)
     map: Optional[str | None] = attr.ib(default=None)
-    maxclients: Optional[int | None] = attr.ib(default=None, converter=to_int)
-    maxfps: Optional[int | None] = attr.ib(default=None, converter=to_int)
-    maxspectators: Optional[int | None] = attr.ib(default=None, converter=to_int)
+    maxclients: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
+    maxfps: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
+    maxspectators: Optional[int | None] = attr.ib(
+        default=None, converter=to_int_or_none
+    )
     mode: Optional[str | None] = attr.ib(default=None)
-    needpass: Optional[int | None] = attr.ib(default=None, converter=to_int)
-    pm_ktjump: Optional[int | None] = attr.ib(default=None, converter=to_int)
+    needpass: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
+    pm_ktjump: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
     progs: Optional[str | None] = attr.ib(default=None)
     qvm: Optional[str | None] = attr.ib(default=None)
-    sv_antilag: Optional[int | None] = attr.ib(default=None, converter=to_int)
-    teamplay: Optional[int | None] = attr.ib(default=None, converter=to_int)
-    timelimit: Optional[int | None] = attr.ib(default=None, converter=to_int)
+    sv_antilag: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
+    teamplay: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
+    timelimit: Optional[int | None] = attr.ib(default=None, converter=to_int_or_none)
     version: Optional[str | None] = attr.ib(default=None)
     z_ext: Optional[str | None] = attr.ib(default=None)
 
