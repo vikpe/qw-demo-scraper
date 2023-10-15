@@ -28,9 +28,9 @@ def format_duration(seconds: float) -> str:
 def min_duration_per_mode(mode: str) -> int:
     min_minutes_per_mode = {
         "ffa": 5,
-        "1on1": 3,
-        "2on2": 5,
-        "4on4": 10,
+        "1on1": 10,
+        "2on2": 10,
+        "4on4": 20,
     }
     default = 10
 
