@@ -52,6 +52,11 @@ def has_demo_by_sha256(sha256: str) -> bool:
     ).count > 0
 
 
+def add_demo(demo: Demo):
+    sb = get_client()
+    return sb.table("demos").insert(demo.as_dict()).execute()
+
+
 def ignore_demo(mode: str, filename: str, sha256: str, reason: str):
     try:
         sb = get_client()

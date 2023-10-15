@@ -74,8 +74,6 @@ def add_missing_demos(demo_mode: str, keep_count: int):
     checksums = get_sha256_per_filename("../demos/demos.sha256")
 
     # upload to s3, add to database
-    sb = supab.get_client()
-
     for demo in demos:
         # skip demo?
         sha256 = checksums[demo.filename]
@@ -138,7 +136,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
         )
 
         try:
-            sb.from_("demos").insert(db_demo.as_dict()).execute()
+            supab.add_demo(db_demo)
         except APIError as e:
             print(e)
             continue
