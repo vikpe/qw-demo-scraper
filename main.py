@@ -1,7 +1,9 @@
 import os
 import shutil
 import subprocess
+import time
 
+import schedule
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from postgrest.exceptions import APIError
@@ -36,17 +38,17 @@ def get_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     return demo_calc.calc_missing_demos(db_demos, server_demos, keep_count)
 
 
-def add_missing_demos(demo_mode: str, keep_count: int):
+def add_missing_demos(mode: str, keep_count: int):
     clear_demo_dir()
 
     # download missing
-    demos = get_missing_demos(demo_mode, keep_count)
+    demos = get_missing_demos(mode, keep_count)
 
     if not demos:
-        print(f"\nadd missing {demo_mode}: no demos found")
+        print(f"\nadd missing {mode}: no demos found")
         return
 
-    print(f"\nadd missing {demo_mode}: found {len(demos)} demos")
+    print(f"\nadd missing {mode}: found {len(demos)} demos")
     net.download_files_to_dir_in_parallel(
         [demo.download_url for demo in demos],
         "demos",
@@ -76,7 +78,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             print(f"{demo.qtv_address} / {demo.filename} - ignore ({reason_to_ignore})")
             ignored_demo = supab.NewIgnoredDemo(
                 sha256=sha256,
-                mode=demo.get_mode(),
+                mode=mode,
                 filename=demo.filename,
                 reason=reason_to_ignore,
             )
@@ -100,7 +102,6 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             continue
 
         # 2. add to database
-        mode = demo.get_mode()
         is_teamplay = info.serverinfo.teamplay in [1, 2] or qmode.is_teamplay(mode)
 
         db_demo = supab.NewDemo(
@@ -127,6 +128,8 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             print(e)
             continue
 
+    print()
+
 
 def prune_demos(mode: str, keep_count: int):
     current_count = supab.get_demo_count_by_mode(mode)
@@ -142,6 +145,8 @@ def prune_demos(mode: str, keep_count: int):
     for demo in supab.get_demos_to_prune(mode, keep_count):
         print(f"deleting {demo.s3_key} with id {demo.id} from {demo.timestamp}")
         delete_demo(demo.id, demo.s3_key)
+
+    print()
 
 
 def delete_demo(demo_id: int, demo_s3_key: str):
@@ -159,9 +164,27 @@ def delete_demo(demo_id: int, demo_s3_key: str):
 def main():
     load_dotenv()
 
-    update_demos("1on1", 250)
-    update_demos("4on4", 150)
-    update_demos("2on2", 50)
+    settings = {
+        "1on1": 250,
+        "4on4": 150,
+        "2on2": 50,
+    }
+
+    for mode, keep_count in settings.items():
+        add_missing_demos(mode, keep_count)
+        prune_demos(mode, keep_count)
+
+        schedule.every(4).minutes.do(
+            add_missing_demos, mode=mode, keep_count=keep_count
+        )
+        schedule.every(30).minutes.do(prune_demos, mode=mode)
+
+    try:
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("interrupted!")
 
 
 if __name__ == "__main__":
