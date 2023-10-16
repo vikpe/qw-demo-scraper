@@ -65,3 +65,6 @@ class ServerInfo:
 
     def as_dict(self) -> dict:
         return attr.asdict(self)
+
+    def get(self, key: str, default=None) -> any:
+        return self.as_dict().get(key, default)
