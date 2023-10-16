@@ -67,4 +67,9 @@ class ServerInfo:
         return attr.asdict(self)
 
     def get(self, key: str, default=None) -> any:
-        return self.as_dict().get(key, default)
+        dict_ = self.as_dict()
+
+        if key in dict_:
+            return default if dict_[key] is None else dict_[key]
+        else:
+            return default
