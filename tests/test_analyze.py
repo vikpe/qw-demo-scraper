@@ -1,7 +1,7 @@
 import context
 
 context.apply()
-from demo_updater.pkg import analyze, mvdparser
+from demo_scraper.pkg import analyze, mvdparser
 
 human_player = mvdparser.Player(
     name="XantoM",

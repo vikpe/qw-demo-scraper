@@ -2,8 +2,8 @@ import context
 
 context.apply()
 
-from demo_updater.pkg import title
-from demo_updater.pkg.mvdparser import Player
+from demo_scraper.pkg import title
+from demo_scraper.pkg.mvdparser import Player
 
 
 def describe_from_mode_and_players():

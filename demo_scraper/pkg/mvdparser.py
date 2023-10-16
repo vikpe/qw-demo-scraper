@@ -7,8 +7,8 @@ import attr
 from cattrs import structure
 from natsort import humansorted
 
-from demo_updater.pkg import qstring
-from demo_updater.pkg.server_info import ServerInfo
+from demo_scraper.pkg import qstring
+from demo_scraper.pkg.server_info import ServerInfo
 
 
 def to_int(value: any) -> int:

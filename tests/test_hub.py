@@ -5,7 +5,7 @@ import context
 
 context.apply()
 
-from demo_updater.services import hub
+from demo_scraper.services import hub
 
 
 def test_mode():

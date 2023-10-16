@@ -7,7 +7,7 @@ from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 from supabase import create_client, Client
 
-from demo_updater.pkg.mvdparser import Player, Team
+from demo_scraper.pkg.mvdparser import Player, Team
 
 
 @attr.define

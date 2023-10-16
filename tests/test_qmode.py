@@ -2,7 +2,7 @@ import context
 
 context.apply()
 
-from demo_updater.pkg.qmode import is_xonx, is_teamplay
+from demo_scraper.pkg.qmode import is_xonx, is_teamplay
 
 
 def test_is_teamplay():

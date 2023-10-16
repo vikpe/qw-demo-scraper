@@ -2,8 +2,8 @@ import context
 
 context.apply()
 
-from demo_updater.services import supab, hub
-from demo_updater.pkg import demo_calc
+from demo_scraper.services import supab, hub
+from demo_scraper.pkg import demo_calc
 
 calc_missing = demo_calc.calc_missing_demos
 

@@ -2,7 +2,7 @@ import context
 
 context.apply()
 
-from demo_updater.pkg.server_info import ServerInfo
+from demo_scraper.pkg.server_info import ServerInfo
 
 
 def test_get():

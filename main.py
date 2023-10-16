@@ -6,9 +6,9 @@ from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from postgrest.exceptions import APIError
 
-from demo_updater.pkg import analyze, mvdparser, net, title, qmode, demo_calc
-from demo_updater.pkg.checksum import get_sha256_per_filename
-from demo_updater.services import aws, hub, supab
+from demo_scraper.pkg import analyze, mvdparser, net, title, qmode, demo_calc
+from demo_scraper.pkg.checksum import get_sha256_per_filename
+from demo_scraper.services import aws, hub, supab
 
 
 def clear_demo_dir():

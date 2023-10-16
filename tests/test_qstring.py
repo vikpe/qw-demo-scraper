@@ -2,7 +2,7 @@ import context
 
 context.apply()
 
-from demo_updater.pkg.qstring import get_prefix, get_suffix, strip_fixes
+from demo_scraper.pkg.qstring import get_prefix, get_suffix, strip_fixes
 
 
 def test_prefix():
