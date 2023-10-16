@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import time
+from typing import List
 
 import schedule
 from botocore.exceptions import ClientError
@@ -142,23 +143,30 @@ def prune_demos(mode: str, keep_count: int):
         f"\nprune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
-    for demo in supab.get_demos_to_prune(mode, keep_count):
-        print(f"deleting {demo.s3_key} with id {demo.id} from {demo.timestamp}")
-        delete_demo(demo.id, demo.s3_key)
+    demos = supab.get_demos_to_prune(mode, keep_count)
+    delete_demos(demos)
 
     print()
 
 
-def delete_demo(demo_id: int, demo_s3_key: str):
-    # 1. delete from s3
-    try:
-        aws.delete(demo_s3_key)
-    except ClientError as e:
-        print(e)
+def delete_demos(demos: List[supab.Demo]):
+    if not demos:
         return
 
-    # 2. delete from database (if s3 deletion is successful)
-    supab.delete_demo(demo_id)
+    deleted_demo_ids = []
+
+    # 1. delete from s3
+    for demo in demos:
+        try:
+            aws.delete(demo.s3_key)
+            deleted_demo_ids.append(demo.id)
+        except ClientError as e:
+            print(e)
+            continue
+
+    # 2. delete from database (for demos where s3 deletion was successful)
+    if deleted_demo_ids:
+        supab.delete_demos(deleted_demo_ids)
 
 
 def main():
@@ -169,7 +177,7 @@ def main():
     mode_settings = {
         "1on1": 250,
         "2on2": 50,
-        "4on4": 150,
+        "4on4": 200,
     }
 
     for mode, keep_count in mode_settings.items():

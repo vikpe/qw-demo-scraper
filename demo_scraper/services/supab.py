@@ -144,3 +144,11 @@ def get_demo_count_by_mode(mode: str) -> int:
 def delete_demo(demo_id: int):
     sb = get_client()
     return sb.from_("demos").delete().eq("id", demo_id).execute()
+
+
+def delete_demos(demo_ids: List[int]):
+    if not demo_ids:
+        return
+
+    sb = get_client()
+    return sb.from_("demos").delete().in_("id", demo_ids).execute()
