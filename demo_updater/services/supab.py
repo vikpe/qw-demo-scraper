@@ -42,6 +42,7 @@ class NewDemo:
     duration: float = attr.ib()
     mode: str = attr.ib()
     map: str = attr.ib()
+    matchtag: str = attr.ib()
     title: str = attr.ib()
     participants: Participants = attr.ib()
 
