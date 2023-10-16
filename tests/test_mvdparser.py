@@ -1,10 +1,10 @@
 import context
 from context import get_testfile_path
-from pkg.server_info import ServerInfo
+from demo_updater.pkg.server_info import ServerInfo
 
 context.apply()
 
-from pkg.mvdparser import (
+from demo_updater.pkg.mvdparser import (
     Team,
     MvdInfo,
     Player,

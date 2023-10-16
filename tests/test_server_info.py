@@ -2,7 +2,7 @@ import context
 
 context.apply()
 
-from pkg import server_info
+from demo_updater.pkg import server_info
 
 
 def describe_from_string():

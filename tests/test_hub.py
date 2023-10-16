@@ -5,7 +5,7 @@ import context
 
 context.apply()
 
-from services import hub
+from demo_updater.services import hub
 
 
 def test_mode():
