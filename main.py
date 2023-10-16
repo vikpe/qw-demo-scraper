@@ -187,7 +187,9 @@ def main():
         schedule.every(add_interval).minutes.do(
             add_missing_demos, mode=mode, keep_count=keep_count
         )
-        schedule.every(prune_interval).minutes.do(prune_demos, mode=mode)
+        schedule.every(prune_interval).minutes.do(
+            prune_demos, mode=mode, keep_count=keep_count
+        )
 
     try:
         while True:
