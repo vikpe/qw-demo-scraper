@@ -112,7 +112,7 @@ def add_missing_demos(demo_mode: str, keep_count: int):
             duration=info.duration,
             mode=mode,
             map=info.map,
-            matchtag=info.serverinfo.matchtag,
+            matchtag=info.serverinfo.get("matchtag", ""),
             title=title.from_mode_and_players(mode, info.players),
             participants=supab.Participants(
                 players=[] if is_teamplay else info.players,
