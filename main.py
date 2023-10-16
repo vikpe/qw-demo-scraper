@@ -164,20 +164,22 @@ def delete_demo(demo_id: int, demo_s3_key: str):
 def main():
     load_dotenv()
 
-    settings = {
+    add_interval = 4
+    prune_interval = 30
+    mode_settings = {
         "1on1": 250,
-        "4on4": 150,
         "2on2": 50,
+        "4on4": 150,
     }
 
-    for mode, keep_count in settings.items():
+    for mode, keep_count in mode_settings.items():
         add_missing_demos(mode, keep_count)
         prune_demos(mode, keep_count)
 
-        schedule.every(4).minutes.do(
+        schedule.every(add_interval).minutes.do(
             add_missing_demos, mode=mode, keep_count=keep_count
         )
-        schedule.every(30).minutes.do(prune_demos, mode=mode)
+        schedule.every(prune_interval).minutes.do(prune_demos, mode=mode)
 
     try:
         while True:
