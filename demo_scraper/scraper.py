@@ -8,6 +8,7 @@ import attr
 import schedule
 from botocore.exceptions import ClientError
 import colorama
+from colorama import Fore
 from postgrest.exceptions import APIError
 
 from demo_scraper.pkg import analyze, mvdparser, net, title, qmode
@@ -44,12 +45,12 @@ def prune_demos(mode: str, keep_count: int):
 
     if current_count <= keep_count:
         print(
-            f"{colorama.Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): nothing to prune"
+            f"{Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): nothing to prune"
         )
         return
 
     print(
-        f"{colorama.Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
+        f"{Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
     demos = supab.get_demos_to_prune(mode, keep_count)
@@ -61,12 +62,10 @@ def add_missing_demos(mode: str, keep_count: int):
     missing_demos = find_missing_demos(mode, keep_count)
 
     if not missing_demos:
-        print(f"{colorama.Fore.LIGHTGREEN_EX}add missing {mode}: no demos found")
+        print(f"{Fore.LIGHTGREEN_EX}add missing {mode}: no demos found")
         return
 
-    print(
-        f"{colorama.Fore.LIGHTGREEN_EX}add missing {mode}: found {len(missing_demos)} demos"
-    )
+    print(f"{Fore.LIGHTGREEN_EX}add missing {mode}: found {len(missing_demos)} demos")
     net.download_files_to_dir_in_parallel(
         [demo.download_url for demo in missing_demos],
         "demos",
@@ -81,12 +80,16 @@ def add_missing_demos(mode: str, keep_count: int):
         # skip demo?
         sha256 = checksums[demo.filename]
         if supab.has_demo_by_sha256(sha256):
-            print(f"{demo.qtv_address} / {demo.filename} - skip (already exists)")
+            print(
+                f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (already exists)"
+            )
             continue
 
         info = mvdparser.MvdInfo.from_file(f"demos/{demo.filename}.json")
         if 0 == info.duration:
-            print(f"{demo.qtv_address} / {demo.filename} - skip (game in progress)")
+            print(
+                f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (game in progress)"
+            )
             continue
 
         # persistently ignore demo?
