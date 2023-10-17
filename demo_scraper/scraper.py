@@ -55,15 +55,15 @@ def prune_demos(mode: str, keep_count: int):
 
 def add_missing_demos(mode: str, keep_count: int):
     # download missing
-    demos = find_missing_demos(mode, keep_count)
+    missing_demos = find_missing_demos(mode, keep_count)
 
-    if not demos:
+    if not missing_demos:
         print(f"\nadd missing {mode}: no demos found")
         return
 
-    print(f"\nadd missing {mode}: found {len(demos)} demos")
+    print(f"\nadd missing {mode}: found {len(missing_demos)} demos")
     net.download_files_to_dir_in_parallel(
-        [demo.download_url for demo in demos],
+        [demo.download_url for demo in missing_demos],
         "demos",
     )
 
@@ -72,7 +72,7 @@ def add_missing_demos(mode: str, keep_count: int):
     checksums = get_sha256_per_filename("demos/demos.sha256")
 
     # upload to s3, add to database
-    for demo in demos:
+    for demo in missing_demos:
         # skip demo?
         sha256 = checksums[demo.filename]
         if supab.has_demo_by_sha256(sha256):
