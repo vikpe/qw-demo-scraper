@@ -7,8 +7,7 @@ def main():
     load_dotenv()
 
     app = ScrapeApp(
-        demo_dir="demos",
-        mode_settings=[
+        [
             ModeSettings("1on1", 250),
             ModeSettings("2on2", 50),
             ModeSettings("4on4", 200),

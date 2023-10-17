@@ -50,8 +50,6 @@ def prune_demos(mode: str, keep_count: int):
     demos = supab.get_demos_to_prune(mode, keep_count)
     delete_demos(demos)
 
-    print()
-
 
 def add_missing_demos(mode: str, keep_count: int):
     # download missing
@@ -141,8 +139,6 @@ def add_missing_demos(mode: str, keep_count: int):
             print(e)
             continue
 
-    print()
-
 
 def find_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     # from database
@@ -163,12 +159,20 @@ def find_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
 class ModeScraper:
     mode: str = attr.ib()
     keep_count: int = attr.ib()
+    demo_dir: str = attr.ib(default="demos")
 
     def add_demos(self):
-        return add_missing_demos(self.mode, self.keep_count)
+        self._clear_demo_dir()
+        add_missing_demos(self.mode, self.keep_count)
+        print()
 
     def prune_demos(self):
-        return prune_demos(self.mode, self.keep_count)
+        prune_demos(self.mode, self.keep_count)
+        print()
+
+    def _clear_demo_dir(self):
+        shutil.rmtree(self.demo_dir)
+        os.mkdir(self.demo_dir)
 
 
 @attr.define
@@ -178,11 +182,9 @@ class ModeSettings:
 
 
 class ScrapeApp:
-    demo_dir: str
     _scrapers: List[ModeScraper]
 
-    def __init__(self, demo_dir: str, mode_settings: List[ModeSettings]):
-        self.demo_dir = demo_dir
+    def __init__(self, mode_settings: List[ModeSettings]):
         self._scrapers = [
             ModeScraper(mode.name, mode.keep_count) for mode in mode_settings
         ]
@@ -205,7 +207,3 @@ class ScrapeApp:
                 time.sleep(1)
         except KeyboardInterrupt:
             print("exit..")
-
-    def _clear_demo_dir(self):
-        shutil.rmtree(self.demo_dir)
-        os.mkdir(self.demo_dir)
