@@ -22,6 +22,7 @@ pytest-watch = "^4.2.0"
 pytest-describe = "^2.1.0"
 responses = "^0.23.3"
 schedule = "^1.2.1"
+colorama = "^0.4.6"
 
 
 [build-system]

@@ -7,6 +7,7 @@ from typing import List
 import attr
 import schedule
 from botocore.exceptions import ClientError
+import colorama
 from postgrest.exceptions import APIError
 
 from demo_scraper.pkg import analyze, mvdparser, net, title, qmode
@@ -14,6 +15,8 @@ from demo_scraper.pkg import demo_calc
 from demo_scraper.pkg.checksum import get_sha256_per_filename
 from demo_scraper.services import aws, supab
 from demo_scraper.services import hub
+
+colorama.init(autoreset=True)
 
 
 def delete_demos(demos: List[supab.Demo]):
@@ -40,11 +43,13 @@ def prune_demos(mode: str, keep_count: int):
     current_count = supab.get_demo_count_by_mode(mode)
 
     if current_count <= keep_count:
-        print(f"\nprune {mode} ({current_count}/{keep_count}): nothing to prune")
+        print(
+            f"{colorama.Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): nothing to prune"
+        )
         return
 
     print(
-        f"\nprune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
+        f"{colorama.Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
     demos = supab.get_demos_to_prune(mode, keep_count)
@@ -56,10 +61,12 @@ def add_missing_demos(mode: str, keep_count: int):
     missing_demos = find_missing_demos(mode, keep_count)
 
     if not missing_demos:
-        print(f"\nadd missing {mode}: no demos found")
+        print(f"{colorama.Fore.LIGHTGREEN_EX}add missing {mode}: no demos found")
         return
 
-    print(f"\nadd missing {mode}: found {len(missing_demos)} demos")
+    print(
+        f"{colorama.Fore.LIGHTGREEN_EX}add missing {mode}: found {len(missing_demos)} demos"
+    )
     net.download_files_to_dir_in_parallel(
         [demo.download_url for demo in missing_demos],
         "demos",

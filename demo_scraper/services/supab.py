@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Optional, List
 
@@ -8,6 +9,9 @@ from postgrest.types import CountMethod
 from supabase import create_client, Client
 
 from demo_scraper.pkg.mvdparser import Player, Team
+
+# disable http logs
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
 @attr.define
