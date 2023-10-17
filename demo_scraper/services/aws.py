@@ -1,6 +1,9 @@
+import logging
 import os
 
 import boto3
+
+logging.getLogger("boto").setLevel(logging.CRITICAL)
 
 
 def upload(filepath: str, key: str, metadata=None):
