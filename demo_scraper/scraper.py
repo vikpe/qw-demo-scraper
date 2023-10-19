@@ -158,7 +158,7 @@ def find_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     # from server
     server_demos = [
         demo
-        for demo in hub.get_demos(mode, keep_count)
+        for demo in hub.get_demos(mode, keep_count + len(ignored_filenames))
         if demo.filename not in ignored_filenames
     ]
 
