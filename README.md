@@ -2,6 +2,8 @@
 
 > Downloads demos from QTVs, uploads to file storage and stores info in database
 
+![image](https://github.com/vikpe/qw-demo-scraper/assets/1616817/19ea8c87-78f6-4704-8a1a-7cf71a91f38e)
+
 ## Process
 
 1. Check QTVs for recent demos
