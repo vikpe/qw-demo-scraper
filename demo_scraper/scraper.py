@@ -78,7 +78,7 @@ def add_missing_demos(mode: str, keep_count: int):
     # upload to s3, add to database
     for demo in missing_demos:
         # skip demo?
-        sha256 = checksums[demo.filename]
+        sha256 = checksums.get(demo.filename, demo.filename)
         if supab.has_demo_by_sha256(sha256):
             print(
                 f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (already exists)"
