@@ -7,7 +7,7 @@ import attr
 from cattrs import structure
 from natsort import humansorted
 
-from demo_scraper.pkg import qstring
+from demo_scraper.pkg import fixes
 from demo_scraper.pkg.server_info import ServerInfo
 
 
@@ -76,7 +76,7 @@ class Team:
         names = [p.name for p in self.players]
 
         if strip_fixes:
-            names = qstring.strip_fixes(names)
+            names = fixes.strip_fixes(names)
 
         name_list = ", ".join(humansorted(names))
         return f"{self.name} ({name_list})"
