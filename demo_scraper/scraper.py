@@ -88,7 +88,7 @@ def add_missing_demos(mode: str, keep_count: int):
         info = mvdparser.MvdInfo.from_file(f"demos/{demo.filename}.json")
         if 0 == info.duration:
             print(
-                f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (game in progress)"
+                f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (empty or in progress)"
             )
             continue
 
