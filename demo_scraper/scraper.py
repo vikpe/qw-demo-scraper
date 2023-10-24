@@ -93,7 +93,7 @@ def add_missing_demos(mode: str, keep_count: int):
             continue
 
         # persistently ignore demo?
-        reason_to_ignore = analyze.reason_to_ignore_demo(info)
+        reason_to_ignore = analyze.reason_to_ignore_demo(info, mode)
 
         if reason_to_ignore is not None:
             print(f"{demo.qtv_address} / {demo.filename} - ignore ({reason_to_ignore})")
