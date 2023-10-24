@@ -5,11 +5,13 @@ from demo_scraper.pkg.server_info import ServerInfo
 context.apply()
 
 from demo_scraper.pkg.mvdparser import (
-    Team,
     MvdInfo,
     Player,
-    to_int,
+    Team,
     get_majority_color,
+    is_valid_player,
+    parse_players,
+    to_int,
 )
 
 
@@ -28,13 +30,40 @@ def test_get_team_color():
     assert get_majority_color([(1, 2), (3, 4), (1, 2)]) == (1, 2)
 
 
+def test_is_valid_player():
+    assert not is_valid_player(Player(name=""))
+    assert not is_valid_player(Player(name="dough", frags=5, distance_moved=0))
+    assert is_valid_player(Player(name="XantoM", frags=0, distance_moved=100))
+
+
+def describe_parse_players():
+    players = [Player(name=""), Player(name="XantoM", distance_moved=100)]
+    converted_players = parse_players(players)
+    assert len(converted_players) == 1
+    assert converted_players[0].name == "XantoM"
+
+
 def describe_team():
     def test_as_dict():
         team = Team(
             name="red",
             players=[
-                Player(name="alpha", team="red", top_color=4, bottom_color=2, frags=7),
-                Player(name="beta", team="red", top_color=4, bottom_color=2, frags=5),
+                Player(
+                    name="alpha",
+                    team="red",
+                    top_color=4,
+                    bottom_color=2,
+                    frags=7,
+                    distance_moved=100,
+                ),
+                Player(
+                    name="beta",
+                    team="red",
+                    top_color=4,
+                    bottom_color=2,
+                    frags=5,
+                    distance_moved=50,
+                ),
             ],
         )
         assert team.as_dict() == {
@@ -53,6 +82,7 @@ def describe_team():
                     "suicides": 0,
                     "teamkills": 0,
                     "ping": 0,
+                    "distance_moved": 100,
                 },
                 {
                     "name": "beta",
@@ -64,6 +94,7 @@ def describe_team():
                     "suicides": 0,
                     "teamkills": 0,
                     "ping": 0,
+                    "distance_moved": 50,
                 },
             ],
         }
@@ -124,6 +155,7 @@ def describe_player():
             deaths=3,
             suicides=4,
             ping=5,
+            distance_moved=100,
         )
         assert player.as_dict() == {
             "name": "beta",
@@ -135,6 +167,7 @@ def describe_player():
             "deaths": 3,
             "suicides": 4,
             "ping": 5,
+            "distance_moved": 100,
         }
 
 
@@ -183,6 +216,7 @@ def describe_mvd_info():
                 deaths=46,
                 suicides=1,
                 ping=12,
+                distance_moved=100,
             ),
             Player(
                 name="ToT_Belgarath",
@@ -194,6 +228,7 @@ def describe_mvd_info():
                 deaths=31,
                 suicides=5,
                 ping=14,
+                distance_moved=100,
             ),
             Player(
                 name="ToT_en_karl",
@@ -205,6 +240,7 @@ def describe_mvd_info():
                 deaths=31,
                 suicides=2,
                 ping=25,
+                distance_moved=100,
             ),
             Player(
                 name="xaan",
@@ -216,5 +252,6 @@ def describe_mvd_info():
                 deaths=35,
                 suicides=3,
                 ping=13,
+                distance_moved=100,
             ),
         ]

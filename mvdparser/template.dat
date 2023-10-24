@@ -21,7 +21,8 @@
       "teamkills": %teamkills%,
       "deaths": %deaths%,
       "suicides": %suicides%,
-      "ping": "%avgping%"
+      "ping": "%avgping%",
+      "distance_moved": "%distancemoved%"
     }
 #EVENT_END
 

@@ -14,7 +14,8 @@
       "teamkills": 0,
       "deaths": 15,
       "suicides": 2,
-      "ping": "40.7059"
+      "ping": "40.7059",
+      "distance_moved": "100.1"
     },
     {
       "name": "_pikachu_",
@@ -25,7 +26,8 @@
       "teamkills": 0,
       "deaths": 68,
       "suicides": 3,
-      "ping": "38.9951"
+      "ping": "38.9951",
+      "distance_moved": "100.1"
     }
   ]
 }

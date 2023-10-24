@@ -3,5 +3,6 @@ __pycache__/
 .pytest_cache/
 demos/
 htmlcov/
+tmp/
 .coverage
 .env

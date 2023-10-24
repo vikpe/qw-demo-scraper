@@ -14,7 +14,8 @@
       "teamkills": 2,
       "deaths": 35,
       "suicides": 3,
-      "ping": "12.6912"
+      "ping": "12.6912",
+      "distance_moved": "100.1"
     },
     {
       "name": "ToT_en_karl",
@@ -25,7 +26,8 @@
       "teamkills": 3,
       "deaths": 31,
       "suicides": 2,
-      "ping": "25.0049"
+      "ping": "25.0049",
+      "distance_moved": "100.1"
     },
     {
       "name": "Dadi",
@@ -36,7 +38,8 @@
       "teamkills": 0,
       "deaths": 46,
       "suicides": 1,
-      "ping": "12.0882"
+      "ping": "12.0882",
+      "distance_moved": "100.1"
     },
     {
       "name": "ToT_Belgarath",
@@ -47,7 +50,8 @@
       "teamkills": 3,
       "deaths": 31,
       "suicides": 5,
-      "ping": "13.5098"
+      "ping": "13.5098",
+      "distance_moved": "100.1"
     }
   ]
 }

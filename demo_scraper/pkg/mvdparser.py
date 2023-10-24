@@ -22,10 +22,6 @@ def path_to_filename(path: str) -> str:
     return path.split("/")[-1]
 
 
-def sort_players(players: List[dict]) -> List[dict]:
-    return humansorted(players, lambda p: p.name)
-
-
 @attr.define
 class Player:
     name: Optional[str] = attr.ib(default="")
@@ -37,9 +33,23 @@ class Player:
     deaths: Optional[int] = attr.ib(default=0)
     suicides: Optional[int] = attr.ib(default=0)
     ping: Optional[float] = attr.ib(converter=to_int, default=0)
+    distance_moved: Optional[float] = attr.ib(converter=to_int, default=0)
 
     def as_dict(self) -> dict:
         return attr.asdict(self)
+
+
+def is_valid_player(player: Player) -> bool:
+    return len(player.name) > 0 and player.distance_moved > 0
+
+
+def parse_players(players: List[Player]) -> List[Player]:
+    players = list(filter(is_valid_player, players))
+    return sort_players(players)
+
+
+def sort_players(players: List[Player]) -> List[Player]:
+    return humansorted(players, lambda p: p.name)
 
 
 @attr.define
@@ -96,7 +106,7 @@ class MvdInfo:
     duration: float = attr.ib()
     map: str = attr.ib()
     serverinfo = attr.ib(converter=ServerInfo.from_string)
-    players: List[Player] = attr.ib(converter=sort_players)
+    players: List[Player] = attr.ib(converter=parse_players)
 
     @classmethod
     def from_file(cls, filepath) -> "MvdInfo":
