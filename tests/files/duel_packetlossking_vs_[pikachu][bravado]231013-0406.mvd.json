@@ -3,11 +3,14 @@
   "date": "2023-10-13 4:7",
   "duration": "610.214",
   "map": "bravado",
+  "hostname": "quake.se:28501",
   "serverinfo": "\\maxfps\\77\\pm_ktjump\\1\\*version\\MVDSV 0.36-beta-antilag-r402\\*z_ext\\511\\*admin\\BLooD_DoG(D_P) <Discord>\\ktxver\\1.43-dev-r402\\maxspectators\\14\\sv_antilag\\1\\*gamedir\\qw\\timelimit\\10\\deathmatch\\3\\mode\\1on1\\*qvm\\so\\*progs\\so\\maxclients\\2\\map\\bravado",
   "players": [
     {
       "name": "PacketLossKing",
+      "name_raw": "PacketLossKing",
       "team": "blue",
+      "team_raw": "blue",
       "top_color": 13,
       "bottom_color": 13,
       "frags": 63,
@@ -19,7 +22,9 @@
     },
     {
       "name": "_pikachu_",
+      "name_raw": "_pikachu_",
       "team": "red",
+      "team_raw": "red",
       "top_color": 4,
       "bottom_color": 4,
       "frags": 10,

@@ -5,17 +5,18 @@ import time
 from typing import List
 
 import attr
+import colorama
 import schedule
 from botocore.exceptions import ClientError
-import colorama
 from colorama import Fore
 from postgrest.exceptions import APIError
 
 from demo_scraper.pkg import analyze, mvdparser, net, title, qmode
 from demo_scraper.pkg import demo_calc
 from demo_scraper.pkg.checksum import get_sha256_per_filename
-from demo_scraper.services import aws, supab
-from demo_scraper.services import hub
+from demo_scraper.services import aws, hub
+from demo_scraper.services.supab import supab
+from demo_scraper.services.supab.participants import Participants, parse_mvd_players
 
 colorama.init(autoreset=True)
 
@@ -135,12 +136,8 @@ def add_missing_demos(mode: str, keep_count: int):
             mode=mode,
             map=info.map,
             matchtag=info.serverinfo.get("matchtag", ""),
-            title=title.from_mode_and_players(mode, info.players),
-            participants=supab.Participants(
-                players=[] if is_teamplay else info.players,
-                teams=mvdparser.Team.from_players(info.players) if is_teamplay else [],
-                player_count=len(info.players),
-            ),
+            title=title.from_mode_and_players(mode, parse_mvd_players(info.players)),
+            participants=Participants.from_mvdparser_players(info.players, is_teamplay),
         )
 
         try:

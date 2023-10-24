@@ -35,6 +35,7 @@ def describe_reason_to_ignore_demo():
             date="",
             duration=610,
             map="",
+            hostname="",
             serverinfo=r"",
             players=[human_player],
         )
@@ -52,6 +53,7 @@ def describe_reason_to_ignore_demo():
             date="",
             duration=620,
             map="",
+            hostname="",
             serverinfo=r"",
             players=[human_player],
         )
@@ -76,6 +78,7 @@ def describe_reason_to_ignore_demo():
             date="",
             duration=1000,
             map="",
+            hostname="",
             serverinfo=r"",
             players=[human_player],
         )
@@ -91,6 +94,7 @@ def describe_reason_to_ignore_demo():
             date="",
             duration=1210,
             map="",
+            hostname="",
             serverinfo=r"\mode\1on1\deathmatch\4",
             players=[human_player],
         )

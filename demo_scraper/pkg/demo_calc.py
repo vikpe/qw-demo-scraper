@@ -1,6 +1,7 @@
 from typing import List
 
-from demo_scraper.services import supab, hub
+from demo_scraper.services.supab import supab
+from demo_scraper.services import hub
 
 
 def calc_missing_demos(

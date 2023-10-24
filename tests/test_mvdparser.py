@@ -7,10 +7,6 @@ context.apply()
 from demo_scraper.pkg.mvdparser import (
     MvdInfo,
     Player,
-    Team,
-    get_majority_color,
-    is_valid_player,
-    parse_players,
     to_int,
 )
 
@@ -23,131 +19,13 @@ def test_parse_ping_str():
     assert to_int("25.6") == 26
 
 
-def test_get_team_color():
-    assert get_majority_color([]) == (0, 0)
-    assert get_majority_color([(1, 2), (3, 4)]) == (1, 2)
-    assert get_majority_color([(1, 2), (3, 4), (5, 6)]) == (1, 2)
-    assert get_majority_color([(1, 2), (3, 4), (1, 2)]) == (1, 2)
-
-
-def test_is_valid_player():
-    assert not is_valid_player(Player(name=""))
-    assert not is_valid_player(Player(name="dough", frags=5, distance_moved=0))
-    assert is_valid_player(Player(name="XantoM", frags=0, distance_moved=100))
-
-
-def describe_parse_players():
-    players = [Player(name=""), Player(name="XantoM", distance_moved=100)]
-    converted_players = parse_players(players)
-    assert len(converted_players) == 1
-    assert converted_players[0].name == "XantoM"
-
-
-def describe_team():
-    def test_as_dict():
-        team = Team(
-            name="red",
-            players=[
-                Player(
-                    name="alpha",
-                    team="red",
-                    top_color=4,
-                    bottom_color=2,
-                    frags=7,
-                    distance_moved=100,
-                ),
-                Player(
-                    name="beta",
-                    team="red",
-                    top_color=4,
-                    bottom_color=2,
-                    frags=5,
-                    distance_moved=50,
-                ),
-            ],
-        )
-        assert team.as_dict() == {
-            "name": "red",
-            "top_color": 4,
-            "bottom_color": 2,
-            "frags": 12,
-            "players": [
-                {
-                    "name": "alpha",
-                    "team": "red",
-                    "top_color": 4,
-                    "bottom_color": 2,
-                    "frags": 7,
-                    "deaths": 0,
-                    "suicides": 0,
-                    "teamkills": 0,
-                    "ping": 0,
-                    "distance_moved": 100,
-                },
-                {
-                    "name": "beta",
-                    "team": "red",
-                    "top_color": 4,
-                    "bottom_color": 2,
-                    "frags": 5,
-                    "deaths": 0,
-                    "suicides": 0,
-                    "teamkills": 0,
-                    "ping": 0,
-                    "distance_moved": 50,
-                },
-            ],
-        }
-
-    def test_from_players():
-        teams = Team.from_players(
-            [
-                Player(name="beta", team="red"),
-                Player(name="alpha", team="red"),
-                Player(name="gamma", team="blue"),
-            ]
-        )
-        assert teams[0] == Team(
-            name="red",
-            players=[
-                Player(name="beta", team="red"),
-                Player(name="alpha", team="red"),
-            ],
-        )
-        assert teams[1] == Team(
-            name="blue",
-            players=[
-                Player(name="gamma", team="blue"),
-            ],
-        )
-
-    def test_get_color():
-        teams = Team.from_players(
-            [
-                Player(top_color=4, bottom_color=2),
-                Player(top_color=4, bottom_color=2),
-                Player(top_color=13, bottom_color=13),
-            ]
-        )
-        assert teams[0].get_color() == (4, 2)
-
-    def test_get_frags():
-        teams = Team.from_players([Player(frags=1), Player(frags=2)])
-        assert teams[0].get_frags() == 3
-
-    def test_to_string():
-        teams = Team.from_players(
-            [Player(name="beta..", team="red"), Player(name="alpha..", team="red")]
-        )
-        assert teams[0].to_string() == "red (alpha.., beta..)"
-        assert teams[0].to_string(strip_fixes=True) == "red (alpha, beta)"
-
-
 def describe_player():
     def test_as_dict():
         player = Player(
             name="beta",
+            name_raw="beta",
             team="red",
+            team_raw="red",
             top_color=4,
             bottom_color=2,
             frags=1,
@@ -159,7 +37,9 @@ def describe_player():
         )
         assert player.as_dict() == {
             "name": "beta",
+            "name_raw": "beta",
             "team": "red",
+            "team_raw": "red",
             "top_color": 4,
             "bottom_color": 2,
             "frags": 1,
@@ -182,6 +62,7 @@ def describe_mvd_info():
         assert info.date == "2023-10-13 0:0"
         assert info.duration == 610.158
         assert info.map == "aerowalk"
+        assert info.hostname == "quake.se:28501"
 
         assert (
             info.serverinfo.as_dict()
@@ -207,8 +88,38 @@ def describe_mvd_info():
         )
         assert info.players == [
             Player(
-                name="Dadi",
+                name="xaan",
+                name_raw="xaan",
                 team="blue",
+                team_raw="blue",
+                top_color=13,
+                bottom_color=13,
+                frags=27,
+                teamkills=2,
+                deaths=35,
+                suicides=3,
+                ping=13,
+                distance_moved=100,
+            ),
+            Player(
+                name="ToT_en_karl",
+                name_raw="ToT_en_karl",
+                team="red",
+                team_raw="red",
+                top_color=4,
+                bottom_color=4,
+                frags=51,
+                teamkills=3,
+                deaths=31,
+                suicides=2,
+                ping=25,
+                distance_moved=100,
+            ),
+            Player(
+                name="Dadi",
+                name_raw="Dadi",
+                team="blue",
+                team_raw="blue",
                 top_color=12,
                 bottom_color=13,
                 frags=15,
@@ -220,7 +131,9 @@ def describe_mvd_info():
             ),
             Player(
                 name="ToT_Belgarath",
+                name_raw="ToT_Belgarath",
                 team="red",
+                team_raw="red",
                 top_color=4,
                 bottom_color=4,
                 frags=10,
@@ -228,30 +141,6 @@ def describe_mvd_info():
                 deaths=31,
                 suicides=5,
                 ping=14,
-                distance_moved=100,
-            ),
-            Player(
-                name="ToT_en_karl",
-                team="red",
-                top_color=4,
-                bottom_color=4,
-                frags=51,
-                teamkills=3,
-                deaths=31,
-                suicides=2,
-                ping=25,
-                distance_moved=100,
-            ),
-            Player(
-                name="xaan",
-                team="blue",
-                top_color=13,
-                bottom_color=13,
-                frags=27,
-                teamkills=2,
-                deaths=35,
-                suicides=3,
-                ping=13,
                 distance_moved=100,
             ),
         ]

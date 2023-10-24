@@ -7,18 +7,10 @@ from cattrs import structure
 from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 from supabase import create_client, Client
-
-from demo_scraper.pkg.mvdparser import Player, Team
+from demo_scraper.services.supab.participants import Participants
 
 # disable http logs
 logging.getLogger("httpx").setLevel(logging.WARNING)
-
-
-@attr.define
-class Participants:
-    players: Optional[List[Player]] = attr.ib(default=[])
-    teams: Optional[List[Team]] = attr.ib(default=[])
-    player_count: Optional[int] = attr.ib(default=0)
 
 
 @attr.define

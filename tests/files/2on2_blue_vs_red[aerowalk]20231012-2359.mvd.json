@@ -3,11 +3,14 @@
   "date": "2023-10-13 0:0",
   "duration": "610.158",
   "map": "aerowalk",
+  "hostname": "quake.se:28501",
   "serverinfo": "\\maxfps\\77\\pm_ktjump\\1\\*version\\MVDSV 0.36\\*z_ext\\511\\*admin\\suom1 <suom1@irc.ax>\\ktxver\\1.42\\sv_antilag\\2\\*gamedir\\qw\\maxspectators\\6\\deathmatch\\3\\timelimit\\10\\teamplay\\2\\mode\\2on2\\*qvm\\so\\*progs\\so\\maxclients\\4\\map\\aerowalk",
   "players": [
     {
       "name": "xaan",
+      "name_raw": "xaan",
       "team": "blue",
+      "team_raw": "blue",
       "top_color": 13,
       "bottom_color": 13,
       "frags": 27,
@@ -19,7 +22,9 @@
     },
     {
       "name": "ToT_en_karl",
+      "name_raw": "ToT_en_karl",
       "team": "red",
+      "team_raw": "red",
       "top_color": 4,
       "bottom_color": 4,
       "frags": 51,
@@ -31,7 +36,9 @@
     },
     {
       "name": "Dadi",
+      "name_raw": "Dadi",
       "team": "blue",
+      "team_raw": "blue",
       "top_color": 12,
       "bottom_color": 13,
       "frags": 15,
@@ -43,7 +50,9 @@
     },
     {
       "name": "ToT_Belgarath",
+      "name_raw": "ToT_Belgarath",
       "team": "red",
+      "team_raw": "red",
       "top_color": 4,
       "bottom_color": 4,
       "frags": 10,
