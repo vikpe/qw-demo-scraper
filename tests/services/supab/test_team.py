@@ -37,6 +37,7 @@ def describe_team():
         assert team_dict["name_color"] == "www"
         assert team_dict["colors"] == [4, 2]
         assert team_dict["frags"] == 12
+        assert team_dict["ping"] == 18
         assert len(team_dict["players"]) == 2
         assert team_dict["players"][0] == {
             "name": "alpha",

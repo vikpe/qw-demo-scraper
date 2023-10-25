@@ -28,6 +28,7 @@ class Team:
             "name": self.name,
             "name_color": self.name_color,
             "colors": list(self.get_colors()),
+            "ping": self.get_ping(),
             "frags": self.get_frags(),
             "players": [p.as_dict() for p in self.players],
         }
@@ -40,6 +41,13 @@ class Team:
     def get_colors(self) -> Tuple[int, int]:
         player_colors = [p.colors for p in self.players]
         return get_majority_color(player_colors)
+
+    def get_ping(self) -> int:
+        return (
+            0
+            if not self.players
+            else round(sum([p.ping for p in self.players]) / len(self.players))
+        )
 
 
 def get_majority_color(colors: List[Tuple[int, int]]) -> [int, int]:
