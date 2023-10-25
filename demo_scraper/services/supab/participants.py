@@ -4,6 +4,7 @@ import attr
 from natsort import humansorted
 
 from demo_scraper.pkg.mvdparser import Player as MvdPlayer
+from demo_scraper.pkg import qcharset
 from demo_scraper.services.supab.player import Player
 from demo_scraper.services.supab.team import Team
 
@@ -59,8 +60,8 @@ def teams_from_mvdplayers(mvd_players: List[MvdPlayer]) -> List[Team]:
     teams = []
     for team_name, players in players_per_team.items():
         team = Team(
-            name=players[0].team_raw,
-            name_color=players[0].team_raw,
+            name=qcharset.raw_to_utf8(players[0].team_raw),
+            name_color=qcharset.raw_to_color_codes(players[0].team_raw),
             players=mvd_players_to_db_players(players),
         )
         teams.append(team)
