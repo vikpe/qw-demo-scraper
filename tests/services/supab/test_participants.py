@@ -19,7 +19,9 @@ def test_mvd_players_to_db_players():
     ]
     assert mvd_players_to_db_players(players) == [
         DbPlayer(
-            name="• ParadokS", name_color="wwwwwwwwww", color=(0, 0), frags=0, ping=0
+            name="• ParadokS", name_color="wwwwwwwwww", colors=(0, 0), frags=0, ping=0
         ),
-        DbPlayer(name="• XantoM", name_color="wwwwwwww", color=(0, 0), frags=0, ping=0),
+        DbPlayer(
+            name="• XantoM", name_color="wwwwwwww", colors=(0, 0), frags=0, ping=0
+        ),
     ]

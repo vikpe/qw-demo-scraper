@@ -27,21 +27,18 @@ class Team:
         result = {
             "name": self.name,
             "name_color": self.name_color,
-            "color": list(self.get_color()),
+            "colors": list(self.get_colors()),
             "frags": self.get_frags(),
             "players": [p.as_dict() for p in self.players],
         }
-
-        for p in result["players"]:
-            del p["color"]
 
         return result
 
     def get_frags(self) -> int:
         return sum([p.frags for p in self.players])
 
-    def get_color(self) -> Tuple[int, int]:
-        player_colors = [p.color for p in self.players]
+    def get_colors(self) -> Tuple[int, int]:
+        player_colors = [p.colors for p in self.players]
         return get_majority_color(player_colors)
 
 

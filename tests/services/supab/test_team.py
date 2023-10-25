@@ -18,14 +18,14 @@ def describe_team():
                 Player(
                     name="alpha",
                     name_color="wwwww",
-                    color=(4, 2),
+                    colors=(4, 2),
                     frags=7,
                     ping=12,
                 ),
                 Player(
                     name="beta",
                     name_color="wwww",
-                    color=(4, 2),
+                    colors=(4, 2),
                     frags=5,
                     ping=25,
                 ),
@@ -35,12 +35,13 @@ def describe_team():
         team_dict = team.as_dict()
         assert team_dict["name"] == "red"
         assert team_dict["name_color"] == "www"
-        assert team_dict["color"] == [4, 2]
+        assert team_dict["colors"] == [4, 2]
         assert team_dict["frags"] == 12
         assert len(team_dict["players"]) == 2
         assert team_dict["players"][0] == {
             "name": "alpha",
             "name_color": "wwwww",
+            "colors": [4, 2],
             "frags": 7,
             "ping": 12,
         }
@@ -48,12 +49,12 @@ def describe_team():
     def test_get_color():
         team = Team(
             players=[
-                Player(color=(4, 2)),
-                Player(color=(4, 2)),
-                Player(color=(13, 13)),
+                Player(colors=(4, 2)),
+                Player(colors=(4, 2)),
+                Player(colors=(13, 13)),
             ]
         )
-        assert team.get_color() == (4, 2)
+        assert team.get_colors() == (4, 2)
 
     def test_get_frags():
         team = Team(players=[Player(frags=1), Player(frags=2)])
