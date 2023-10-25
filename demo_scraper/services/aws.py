@@ -3,12 +3,13 @@ import os
 
 import boto3
 
+logging.getLogger("boto").setLevel(logging.CRITICAL)
+
 
 def upload(filepath: str, key: str, metadata=None):
     if metadata is None:
         metadata = {}
 
-    logging.getLogger("boto").setLevel(logging.CRITICAL)
     s3 = boto3.client("s3")
     bucket = os.getenv("AWS_S3_BUCKET")
     s3.upload_file(
@@ -19,8 +20,7 @@ def upload(filepath: str, key: str, metadata=None):
     )
 
 
-def delete(key):
-    logging.getLogger("boto").setLevel(logging.CRITICAL)
+def delete(key: str):
     s3 = boto3.client("s3")
     bucket = os.getenv("AWS_S3_BUCKET")
     s3.delete_object(
