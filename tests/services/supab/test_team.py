@@ -1,5 +1,5 @@
-from demo_scraper.services.supab.team import Team, get_majority_color
 from demo_scraper.services.supab.player import Player
+from demo_scraper.services.supab.team import Team, get_majority_color
 
 
 def test_get_majority_color():
@@ -17,7 +17,7 @@ def describe_team():
             players=[
                 Player(
                     name="alpha",
-                    name_color="www",
+                    name_color="wwwww",
                     team="red",
                     team_color="www",
                     color=(4, 2),
@@ -31,11 +31,25 @@ def describe_team():
                     team_color="www",
                     color=(4, 2),
                     frags=5,
-                    ping=12,
+                    ping=25,
                 ),
             ],
         )
-        assert team.as_dict()["name"] == "red"
+
+        team_dict = team.as_dict()
+
+        assert team_dict["name"] == "red"
+        assert team_dict["name_color"] == "www"
+        assert team_dict["color"] == [4, 2]
+        assert team_dict["frags"] == 12
+        assert len(team_dict["players"]) == 2
+        assert team_dict["players"][0] == {
+            "name": "alpha",
+            "name_color": "wwwww",
+            "color": [4, 2],
+            "frags": 7,
+            "ping": 12,
+        }
 
     def test_from_players():
         player_beta = Player(

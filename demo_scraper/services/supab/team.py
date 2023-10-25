@@ -48,12 +48,19 @@ class Team:
         return f"{self.name} ({name_list})"
 
     def as_dict(self) -> dict:
+        player_dicts = [p.as_dict() for p in self.players]
+
+        # omit team info (redundant)
+        for player in player_dicts:
+            del player["team"]
+            del player["team_color"]
+
         return {
             "name": self.name,
             "name_color": self.name_color,
-            "color": self.get_color(),
+            "color": list(self.get_color()),
             "frags": self.get_frags(),
-            "players": [p.as_dict() for p in self.players],
+            "players": player_dicts,
         }
 
     def get_frags(self) -> int:
