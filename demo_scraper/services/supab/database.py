@@ -1,70 +1,16 @@
 import logging
 import os
-from typing import Optional, List
+from typing import List
 
-import attr
 from cattrs import structure
 from postgrest.exceptions import APIError
 from postgrest.types import CountMethod
 from supabase import create_client, Client
-from demo_scraper.services.supab.participants import Participants
+
+from demo_scraper.services.supab.demo import NewDemo, Demo, NewIgnoredDemo, IgnoredDemo
 
 # disable http logs
 logging.getLogger("httpx").setLevel(logging.WARNING)
-
-
-@attr.define
-class Demo:
-    id: Optional[int] = attr.ib(default=0)
-    sha256: Optional[str] = attr.ib(default="")
-    source: Optional[str] = attr.ib(default="")
-    filename: Optional[str] = attr.ib(default="")
-    s3_key: Optional[str] = attr.ib(default="")
-    timestamp: Optional[str] = attr.ib(default="")
-    duration: Optional[float] = attr.ib(default=0.0)
-    mode: Optional[str] = attr.ib(default="")
-    map: Optional[str] = attr.ib(default="")
-    title: Optional[str] = attr.ib(default="")
-    participants: Optional[Participants] = attr.ib(default=Participants())
-
-
-@attr.define
-class NewDemo:
-    sha256: str = attr.ib()
-    source: str = attr.ib()
-    filename: str = attr.ib()
-    s3_key: str = attr.ib()
-    timestamp: str = attr.ib()
-    duration: float = attr.ib()
-    mode: str = attr.ib()
-    map: str = attr.ib()
-    matchtag: str = attr.ib()
-    title: str = attr.ib()
-    participants: Participants = attr.ib()
-
-    def as_dict(self) -> dict:
-        return attr.asdict(self)
-
-
-@attr.define
-class IgnoredDemo:
-    id: Optional[int] = attr.ib(default=0)
-    sha256: Optional[str] = attr.ib(default="")
-    mode: Optional[str] = attr.ib(default="")
-    filename: Optional[str] = attr.ib(default="")
-    reason: Optional[str] = attr.ib(default="")
-    created_at: Optional[str] = attr.ib(default="")
-
-
-@attr.define
-class NewIgnoredDemo:
-    sha256: str = attr.ib()
-    mode: str = attr.ib()
-    filename: str = attr.ib()
-    reason: str = attr.ib()
-
-    def as_dict(self) -> dict:
-        return attr.asdict(self)
 
 
 def get_client() -> Client:

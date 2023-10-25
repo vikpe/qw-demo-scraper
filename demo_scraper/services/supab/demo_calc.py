@@ -1,11 +1,13 @@
 from typing import List
 
-from demo_scraper.services.supab import supab
 from demo_scraper.services import hub
+from demo_scraper.services.supab.demo import Demo
 
 
 def calc_missing_demos(
-    db_demos: List[supab.Demo], server_demos: List[hub.Demo], keep_count: int
+    db_demos: List[Demo],
+    server_demos: List[hub.Demo],
+    keep_count: int,
 ):
     if not server_demos:
         return []

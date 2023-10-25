@@ -11,17 +11,17 @@ from botocore.exceptions import ClientError
 from colorama import Fore
 from postgrest.exceptions import APIError
 
-from demo_scraper.pkg import analyze, mvdparser, net, title, qmode
-from demo_scraper.pkg import demo_calc
+from demo_scraper.pkg import title, net, analyze, mvdparser, qmode
 from demo_scraper.pkg.checksum import get_sha256_per_filename
-from demo_scraper.services import aws, hub
-from demo_scraper.services.supab import supab
+from demo_scraper.services import hub, aws
+from demo_scraper.services.supab import database as supab, demo_calc
+from demo_scraper.services.supab.demo import Demo as DbDemo
 from demo_scraper.services.supab.participants import Participants, parse_mvd_players
 
 colorama.init(autoreset=True)
 
 
-def delete_demos(demos: List[supab.Demo]):
+def delete_demos(demos: List[DbDemo]):
     if not demos:
         return
 
