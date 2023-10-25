@@ -1,33 +1,41 @@
 from demo_scraper.pkg import title
 from demo_scraper.services.supab.player import Player
+from demo_scraper.services.supab.team import Team
+
+
+def test_from_mode_and_teams():
+    teams = [
+        Team(
+            name="red",
+            players=[
+                Player(name="alpha"),
+                Player(name="beta"),
+            ],
+        ),
+        Team(
+            name="tot",
+            players=[
+                Player(name="tot_gamma"),
+                Player(name="tot_delta"),
+            ],
+        ),
+    ]
+
+    assert title.from_teams(teams) == "red (alpha, beta) vs tot (delta, gamma)"
 
 
 def describe_from_mode_and_players():
     players = [
-        Player(name="alpha", team="red"),
-        Player(name="beta", team="red"),
-        Player(name="tot_gamma", team="blue"),
-        Player(name="tot_delta", team="blue"),
+        Player(name="alpha"),
+        Player(name="beta"),
+        Player(name="tot_gamma"),
+        Player(name="tot_delta"),
     ]
 
     def test_ffa():
         assert (
             title.from_mode_and_players("ffa", players)
             == "alpha, beta, tot_delta, tot_gamma"
-        )
-
-    def test_xonx():
-        assert (
-            title.from_mode_and_players("2on2", players)
-            == "blue (delta, gamma) vs red (alpha, beta)"
-        )
-        assert (
-            title.from_mode_and_players("4on4", players)
-            == "blue (delta, gamma) vs red (alpha, beta)"
-        )
-        assert (
-            title.from_mode_and_players("2on2", players[0:3])
-            == "blue (tot_gamma) vs red (alpha, beta)"
         )
 
     def test_1on1():

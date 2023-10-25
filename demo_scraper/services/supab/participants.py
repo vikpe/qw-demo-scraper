@@ -8,30 +8,61 @@ from demo_scraper.services.supab.player import Player
 from demo_scraper.services.supab.team import Team
 
 
-def is_valid_mvd_player(player: MvdPlayer) -> bool:
-    return len(player.name) > 0 and player.distance_moved > 0
-
-
-def parse_mvd_players(players: List[MvdPlayer]) -> List[Player]:
-    valid_mvd_players = [p for p in players if is_valid_mvd_player(p)]
-    players = [Player.from_mvdparser_player(p) for p in valid_mvd_players]
-    return humansorted(players, lambda p: p.name)
-
-
 @attr.define
 class Participants:
     players: Optional[List[Player]] = attr.ib(default=[])
     teams: Optional[List[Team]] = attr.ib(default=[])
     player_count: Optional[int] = attr.ib(default=0)
 
+    def as_dict(self) -> dict:
+        return {
+            "players": [p.as_dict() for p in self.players],
+            "teams": [t.as_dict() for t in self.teams],
+            "player_count": self.player_count,
+        }
+
     @classmethod
     def from_mvdparser_players(
         cls, mvd_players: List[MvdPlayer], is_teamplay: bool
     ) -> "Participants":
-        players = parse_mvd_players(mvd_players)
+        valid_players = [p for p in mvd_players if is_valid_mvd_player(p)]
+        player_count = len(valid_players)
 
-        return cls(
-            players=[] if is_teamplay else players,
-            teams=Team.from_players(players) if is_teamplay else [],
-            player_count=len(players),
+        if is_teamplay:
+            return cls(
+                players=[],
+                teams=teams_from_mvdplayers(valid_players),
+                player_count=player_count,
+            )
+        else:
+            return cls(
+                players=mvd_players_to_db_players(valid_players),
+                teams=[],
+                player_count=player_count,
+            )
+
+
+def is_valid_mvd_player(player: MvdPlayer) -> bool:
+    return len(player.name) > 0 and player.distance_moved > 0
+
+
+def mvd_players_to_db_players(mvd_players: List[MvdPlayer]) -> List[Player]:
+    players = [Player.from_mvdparser_player(p) for p in mvd_players]
+    return humansorted(players, lambda p: p.name)
+
+
+def teams_from_mvdplayers(mvd_players: List[MvdPlayer]) -> List[Team]:
+    players_per_team: dict[str, List[MvdPlayer]] = {}
+    for player in mvd_players:
+        players_per_team.setdefault(player.team_raw, []).append(player)
+
+    teams = []
+    for team_name, players in players_per_team.items():
+        team = Team(
+            name=players[0].team_raw,
+            name_color=players[0].team_raw,
+            players=mvd_players_to_db_players(players),
         )
+        teams.append(team)
+
+    return teams

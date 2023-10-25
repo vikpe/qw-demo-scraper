@@ -16,7 +16,7 @@ from demo_scraper.pkg.checksum import get_sha256_per_filename
 from demo_scraper.services import hub, aws
 from demo_scraper.services.supab import database as supab, demo_calc
 from demo_scraper.services.supab.demo import Demo as DbDemo
-from demo_scraper.services.supab.participants import Participants, parse_mvd_players
+from demo_scraper.services.supab.participants import Participants
 
 colorama.init(autoreset=True)
 
@@ -125,6 +125,12 @@ def add_missing_demos(mode: str, keep_count: int):
 
         # 2. add to database
         is_teamplay = info.serverinfo.teamplay in [1, 2] or qmode.is_teamplay(mode)
+        participants = Participants.from_mvdparser_players(info.players, is_teamplay)
+        demo_title = (
+            title.from_teams(participants.teams)
+            if is_teamplay
+            else title.from_mode_and_players(mode, participants.players)
+        )
 
         db_demo = supab.NewDemo(
             sha256=sha256,
@@ -136,8 +142,8 @@ def add_missing_demos(mode: str, keep_count: int):
             mode=mode,
             map=info.map,
             matchtag=info.serverinfo.get("matchtag", ""),
-            title=title.from_mode_and_players(mode, parse_mvd_players(info.players)),
-            participants=Participants.from_mvdparser_players(info.players, is_teamplay),
+            title=demo_title,
+            participants=participants,
         )
 
         try:

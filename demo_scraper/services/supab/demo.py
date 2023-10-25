@@ -38,7 +38,19 @@ class NewDemo:
     participants: Participants = attr.ib()
 
     def as_dict(self) -> dict:
-        return attr.asdict(self)
+        return {
+            "sha256": self.sha256,
+            "source": self.source,
+            "filename": self.filename,
+            "s3_key": self.s3_key,
+            "timestamp": self.timestamp,
+            "duration": self.duration,
+            "mode": self.mode,
+            "map": self.map,
+            "matchtag": self.matchtag,
+            "title": self.title,
+            "participants": self.participants.as_dict(),
+        }
 
 
 @attr.define

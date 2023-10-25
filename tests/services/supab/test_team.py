@@ -18,8 +18,6 @@ def describe_team():
                 Player(
                     name="alpha",
                     name_color="wwwww",
-                    team="red",
-                    team_color="www",
                     color=(4, 2),
                     frags=7,
                     ping=12,
@@ -27,8 +25,6 @@ def describe_team():
                 Player(
                     name="beta",
                     name_color="wwww",
-                    team="red",
-                    team_color="www",
                     color=(4, 2),
                     frags=5,
                     ping=25,
@@ -37,7 +33,6 @@ def describe_team():
         )
 
         team_dict = team.as_dict()
-
         assert team_dict["name"] == "red"
         assert team_dict["name_color"] == "www"
         assert team_dict["color"] == [4, 2]
@@ -46,71 +41,31 @@ def describe_team():
         assert team_dict["players"][0] == {
             "name": "alpha",
             "name_color": "wwwww",
-            "color": [4, 2],
             "frags": 7,
             "ping": 12,
         }
 
-    def test_from_players():
-        player_beta = Player(
-            name="beta",
-            name_color="wwww",
-            team="red",
-            team_color="www",
-        )
-        player_alpha = Player(
-            name="alpha",
-            name_color="wwwww",
-            team="red",
-            team_color="www",
-        )
-        player_gamma = Player(
-            name="gamma",
-            name_color="wwwww",
-            team="blue",
-            team_color="wwww",
-        )
-        teams = Team.from_players(
-            [
-                player_beta,
-                player_alpha,
-                player_gamma,
-            ]
-        )
-        assert teams[0] == Team(
-            name="red",
-            name_color="www",
-            players=[
-                player_beta,
-                player_alpha,
-            ],
-        )
-
-        assert teams[1] == Team(
-            name="blue",
-            name_color="wwww",
-            players=[
-                player_gamma,
-            ],
-        )
-
     def test_get_color():
-        team_red = Team(
+        team = Team(
             players=[
                 Player(color=(4, 2)),
                 Player(color=(4, 2)),
                 Player(color=(13, 13)),
             ]
         )
-        assert team_red.get_color() == (4, 2)
+        assert team.get_color() == (4, 2)
 
     def test_get_frags():
-        teams = Team.from_players([Player(frags=1), Player(frags=2)])
-        assert teams[0].get_frags() == 3
+        team = Team(players=[Player(frags=1), Player(frags=2)])
+        assert team.get_frags() == 3
 
     def test_to_string():
-        teams = Team.from_players(
-            [Player(name="beta..", team="red"), Player(name="alpha..", team="red")]
+        team = Team(
+            name="red",
+            players=[
+                Player(name="beta___"),
+                Player(name="alpha___"),
+            ],
         )
-        assert teams[0].to_string() == "red (alpha.., beta..)"
-        assert teams[0].to_string(strip_fixes=True) == "red (alpha, beta)"
+        assert team.to_string() == "red (alpha___, beta___)"
+        assert team.to_string(strip_fixes=True) == "red (alpha, beta)"
