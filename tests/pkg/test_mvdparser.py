@@ -1,14 +1,9 @@
-import context
-from context import get_testfile_path
-from demo_scraper.pkg.server_info import ServerInfo
-
-context.apply()
-
 from demo_scraper.pkg.mvdparser import (
     MvdInfo,
     Player,
     to_int,
 )
+from demo_scraper.pkg.server_info import ServerInfo
 
 
 def test_parse_ping_str():
@@ -53,9 +48,7 @@ def describe_player():
 
 def describe_mvd_info():
     def test_from_file():
-        file_path = get_testfile_path(
-            "2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json"
-        )
+        file_path = "tests/files/2on2_blue_vs_red[aerowalk]20231012-2359.mvd.json"
         info = MvdInfo.from_file(file_path)
 
         assert info.filepath == "2on2_blue_vs_red[aerowalk]20231012-2359.mvd"

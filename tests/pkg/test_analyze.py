@@ -1,6 +1,3 @@
-import context
-
-context.apply()
 from demo_scraper.pkg import analyze, mvdparser
 
 human_player = mvdparser.Player(

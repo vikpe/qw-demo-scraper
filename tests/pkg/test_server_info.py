@@ -1,7 +1,3 @@
-import context
-
-context.apply()
-
 from demo_scraper.pkg.server_info import ServerInfo
 
 

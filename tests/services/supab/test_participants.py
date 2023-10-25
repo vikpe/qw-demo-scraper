@@ -1,6 +1,6 @@
 from demo_scraper.pkg.mvdparser import Player
 
-from services.supab.participants import (
+from demo_scraper.services.supab.participants import (
     is_valid_mvd_player,
     parse_mvd_players,
 )

@@ -1,7 +1,3 @@
-import context
-
-context.apply()
-
 from demo_scraper.pkg.fixes import get_prefix, get_suffix, strip_fixes
 
 

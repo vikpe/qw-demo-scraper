@@ -1,7 +1,3 @@
-import context
-
-context.apply()
-
 from demo_scraper.pkg.qmode import is_xonx, is_teamplay
 
 

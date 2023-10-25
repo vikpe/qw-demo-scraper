@@ -1,10 +1,6 @@
 import responses
 from responses import matchers
 
-import context
-
-context.apply()
-
 from demo_scraper.services import hub
 
 

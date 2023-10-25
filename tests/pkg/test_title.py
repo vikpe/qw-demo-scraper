@@ -1,7 +1,3 @@
-import context
-
-context.apply()
-
 from demo_scraper.pkg import title
 from demo_scraper.services.supab.player import Player
 
