@@ -119,7 +119,7 @@ def add_missing_demos(mode: str, keep_count: int):
                 "filename": demo.filename,
             }
             aws.upload(zip_path, s3_key, metadata)
-        except ClientError as e:
+        except (ClientError, FileNotFoundError) as e:
             print(e)
             continue
 
