@@ -86,7 +86,14 @@ def add_missing_demos(mode: str, keep_count: int):
             )
             continue
 
-        info = mvdparser.MvdInfo.from_file(f"demos/{demo.filename}.json")
+        try:
+            info = mvdparser.MvdInfo.from_file(f"demos/{demo.filename}.json")
+        except FileNotFoundError:
+            print(
+                f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (failed to parse info)"
+            )
+            continue
+
         if 0 == info.duration:
             print(
                 f"{Fore.BLUE}{demo.qtv_address} / {demo.filename} - skip (empty or in progress)"
