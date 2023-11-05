@@ -182,12 +182,18 @@ class ModeScraper:
     demo_dir: str = attr.ib(default="demos")
 
     def add_demos(self):
-        self._clear_demo_dir()
-        add_missing_demos(self.mode, self.keep_count)
+        try:
+            self._clear_demo_dir()
+            add_missing_demos(self.mode, self.keep_count)
+        except BaseException as e:
+            print("error adding demos", e)
         print()
 
     def prune_demos(self):
-        prune_demos(self.mode, self.keep_count)
+        try:
+            prune_demos(self.mode, self.keep_count)
+        except BaseException as e:
+            print("error pruning demos", e)
         print()
 
     def _clear_demo_dir(self):
