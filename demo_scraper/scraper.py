@@ -54,7 +54,7 @@ def prune_demos(mode: str, keep_count: int):
         f"{Fore.LIGHTMAGENTA_EX}prune {mode} ({current_count}/{keep_count}): remove {current_count - keep_count} demos "
     )
 
-    demos = supab.get_demos_to_prune(mode, keep_count)
+    demos = supab.get_recent_demos_to_prune(mode, keep_count)
     delete_demos(demos)
 
 
@@ -162,7 +162,7 @@ def add_missing_demos(mode: str, keep_count: int):
 
 def find_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     # from database
-    db_demos = supab.get_demos_by_mode(mode)
+    db_demos = supab.get_recent_demos_by_mode(mode)
     ignored_filenames = supab.get_ignored_filenames_by_mode(mode)
 
     # from server

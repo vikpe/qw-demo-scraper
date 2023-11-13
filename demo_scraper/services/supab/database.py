@@ -42,11 +42,12 @@ def ignore_demo(demo: NewIgnoredDemo):
         print(e)
 
 
-def get_demos_by_mode(mode: str) -> list[Demo]:
+def get_recent_demos_by_mode(mode: str) -> list[Demo]:
     sb = get_client()
     db_demos_query = (
         sb.table("demos")
         .select("filename, timestamp")
+        .is_("event_id", "NULL")  # no event = recent
         .eq("mode", mode)
         .order("timestamp", desc=True)
         .execute()
@@ -54,11 +55,12 @@ def get_demos_by_mode(mode: str) -> list[Demo]:
     return [structure(demo, Demo) for demo in db_demos_query.data]
 
 
-def get_demos_to_prune(mode: str, keep_count: int):
+def get_recent_demos_to_prune(mode: str, keep_count: int):
     sb = get_client()
     query = (
         sb.table("demos")
         .select("id, timestamp, s3_key", count=CountMethod.exact)
+        .is_("event_id", "NULL")  # no event = recent
         .eq("mode", mode)
         .order("timestamp", desc=True)
         .range(keep_count, keep_count + 500)
