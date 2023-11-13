@@ -141,7 +141,7 @@ def add_missing_recent_demos(mode: str, keep_count: int):
 
         db_demo = supab.NewDemo(
             sha256=sha256,
-            source=demo.qtv_address,
+            source=info.hostname,
             filename=demo.filename,
             s3_key=s3_key,
             timestamp=demo.time,
