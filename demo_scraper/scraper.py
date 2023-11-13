@@ -41,7 +41,7 @@ def delete_demos(demos: List[DbDemo]):
         supab.delete_demos(deleted_demo_ids)
 
 
-def prune_demos(mode: str, keep_count: int):
+def prune_recent_demos(mode: str, keep_count: int):
     current_count = supab.get_recent_demo_count_by_mode(mode)
 
     if current_count <= keep_count:
@@ -58,7 +58,7 @@ def prune_demos(mode: str, keep_count: int):
     delete_demos(demos)
 
 
-def add_missing_demos(mode: str, keep_count: int):
+def add_missing_recent_demos(mode: str, keep_count: int):
     # download missing
     missing_demos = find_missing_demos(mode, keep_count)
 
@@ -184,14 +184,14 @@ class ModeScraper:
     def add_demos(self):
         try:
             self._clear_demo_dir()
-            add_missing_demos(self.mode, self.keep_count)
+            add_missing_recent_demos(self.mode, self.keep_count)
         except BaseException as e:
             print("error adding demos", e)
         print()
 
     def prune_demos(self):
         try:
-            prune_demos(self.mode, self.keep_count)
+            prune_recent_demos(self.mode, self.keep_count)
         except BaseException as e:
             print("error pruning demos", e)
         print()
