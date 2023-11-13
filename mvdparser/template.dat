@@ -25,7 +25,22 @@
       "deaths": %deaths%,
       "suicides": %suicides%,
       "ping": "%avgping%",
-      "distance_moved": "%distancemoved%"
+      "distance_moved": "%distancemoved%",
+      "items": {
+          "pent": %pentcount%,
+          "quad": %quadcount%,
+          "ring": %ringcount%,
+          "ga": %gacount%,
+          "ya": %yacount%,
+          "ra": %racount%,
+          "mh": %mhcount%,
+          "ssg":{"took":%ssgcount%, "drop":%ssgdrop%},
+          "ng":{"took":%ngcount%, "drop":%ngdrop%},
+          "sng":{"took":%sngcount%, "drop":%sngdrop%},
+          "gl":{"took":%glcount%, "drop":%gldrop%},
+          "rl":{"took":%rlcount%, "drop":%rldrop%},
+          "lg":{"took":%lgcount%, "drop":%lgdrop%}
+      }
     }
 #EVENT_END
 
