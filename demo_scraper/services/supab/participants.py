@@ -3,8 +3,8 @@ from typing import List, Optional
 import attr
 from natsort import humansorted
 
-from demo_scraper.pkg.mvdparser import Player as MvdPlayer
 from demo_scraper.pkg import qcharset
+from demo_scraper.pkg.mvdparser import Player as MvdPlayer
 from demo_scraper.services.supab.player import Player
 from demo_scraper.services.supab.team import Team
 
@@ -66,4 +66,4 @@ def teams_from_mvdplayers(mvd_players: List[MvdPlayer]) -> List[Team]:
         )
         teams.append(team)
 
-    return teams
+    return humansorted(teams, lambda t: t.name)
