@@ -42,7 +42,7 @@ def delete_demos(demos: List[DbDemo]):
 
 
 def prune_demos(mode: str, keep_count: int):
-    current_count = supab.get_demo_count_by_mode(mode)
+    current_count = supab.get_recent_demo_count_by_mode(mode)
 
     if current_count <= keep_count:
         print(

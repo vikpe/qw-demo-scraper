@@ -75,11 +75,12 @@ def get_ignored_filenames_by_mode(mode: str) -> list[str]:
     return [structure(demo, IgnoredDemo).filename for demo in query.data]
 
 
-def get_demo_count_by_mode(mode: str) -> int:
+def get_recent_demo_count_by_mode(mode: str) -> int:
     sb = get_client()
     return (
         sb.table("demos")
         .select("count", count=CountMethod.exact)
+        .is_("event_id", "NULL")  # no event = recent
         .eq("mode", mode)
         .execute()
     ).count
