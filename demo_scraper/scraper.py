@@ -73,7 +73,7 @@ def add_missing_recent_demos(mode: str, keep_count: int):
     )
 
     # checksums, parse, compress
-    subprocess.run(["bash", "process_demos.sh"])
+    subprocess.run(["bash", "process_demos.sh", "demos"])
     checksums = get_sha256_per_filename("demos/demos.sha256")
 
     # upload to s3, add to database
