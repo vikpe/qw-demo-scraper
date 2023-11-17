@@ -11,7 +11,7 @@ from botocore.exceptions import ClientError
 from colorama import Fore
 from postgrest.exceptions import APIError
 
-from demo_scraper.pkg import title, net, analyze, mvdparser, qmode
+from demo_scraper.pkg import title, net, analyze, mvdparser, qmode, parse
 from demo_scraper.pkg.checksum import get_sha256_per_filename
 from demo_scraper.services import hub, aws
 from demo_scraper.services.supab import database as supab, demo_calc
@@ -141,7 +141,7 @@ def add_missing_recent_demos(mode: str, keep_count: int):
 
         db_demo = supab.NewDemo(
             sha256=sha256,
-            source=info.hostname,
+            source=parse.hostport(info.hostname),
             filename=demo.filename,
             s3_key=s3_key,
             timestamp=demo.time,
