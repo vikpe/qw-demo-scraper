@@ -10,7 +10,7 @@ def main():
         [
             ModeSettings("1on1", 600),
             ModeSettings("2on2", 200),
-            ModeSettings("4on4", 800),
+            ModeSettings("4on4", 3200),
             ModeSettings("ctf", 800),
         ],
     )
