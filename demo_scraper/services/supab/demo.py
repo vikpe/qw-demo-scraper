@@ -13,6 +13,7 @@ class Demo:
     id: Optional[int] = attr.ib(default=0)
     sha256: Optional[str] = attr.ib(default="")
     source: Optional[str] = attr.ib(default="")
+    qtv_address: Optional[str] = attr.ib(default="")
     filename: Optional[str] = attr.ib(default="")
     s3_key: Optional[str] = attr.ib(default="")
     timestamp: Optional[str] = attr.ib(default="")
@@ -27,6 +28,7 @@ class Demo:
 class NewDemo:
     sha256: str = attr.ib()
     source: str = attr.ib()
+    qtv_address: str = attr.ib()
     filename: str = attr.ib()
     s3_key: str = attr.ib()
     timestamp: str = attr.ib()
@@ -41,6 +43,7 @@ class NewDemo:
         return {
             "sha256": self.sha256,
             "source": self.source,
+            "qtv_address": self.qtv_address,
             "filename": self.filename,
             "s3_key": self.s3_key,
             "timestamp": self.timestamp,
