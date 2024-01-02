@@ -60,7 +60,7 @@ class IgnoredDemo:
     mode: Optional[str] = attr.ib(default="")
     filename: Optional[str] = attr.ib(default="")
     reason: Optional[str] = attr.ib(default="")
-    created_at: Optional[str] = attr.ib(default="")
+    timestamp: Optional[str] = attr.ib(default="")
 
 
 @attr.define
@@ -69,6 +69,7 @@ class NewIgnoredDemo:
     mode: str = attr.ib()
     filename: str = attr.ib()
     reason: str = attr.ib()
+    timestamp: str = attr.ib()
 
     def as_dict(self) -> dict:
         return attr.asdict(self)

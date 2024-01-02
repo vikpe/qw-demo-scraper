@@ -110,6 +110,7 @@ def add_missing_recent_demos(mode: str, keep_count: int):
                 mode=mode,
                 filename=demo.filename,
                 reason=reason_to_ignore,
+                timestamp=demo.time,
             )
             supab.ignore_demo(ignored_demo)
             continue
