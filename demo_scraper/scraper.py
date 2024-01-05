@@ -14,6 +14,7 @@ from postgrest.exceptions import APIError
 from demo_scraper.pkg import title, net, analyze, mvdparser, qmode, parse
 from demo_scraper.pkg.checksum import get_sha256_per_filename
 from demo_scraper.services import hub, aws
+from demo_scraper.services.hub import Demo as HubDemo
 from demo_scraper.services.supab import database as supab, demo_calc
 from demo_scraper.services.supab.demo import Demo as DbDemo
 from demo_scraper.services.supab.participants import Participants
@@ -59,18 +60,25 @@ def prune_recent_demos(mode: str, keep_count: int):
 
 
 def add_missing_recent_demos(mode: str, keep_count: int):
-    # download missing
-    missing_demos = find_missing_demos(mode, keep_count)
+    is_disk_run = False
+
+    if is_disk_run:
+        missing_demos: List[HubDemo] = get_demos_from_disk(mode, "nikke_custom_server")
+
+    else:  # download missing
+        missing_demos = find_missing_demos(mode, keep_count)
 
     if not missing_demos:
         print(f"{Fore.LIGHTGREEN_EX}add missing {mode}: no demos found")
         return
 
     print(f"{Fore.LIGHTGREEN_EX}add missing {mode}: found {len(missing_demos)} demos")
-    net.download_files_to_dir_in_parallel(
-        [demo.download_url for demo in missing_demos],
-        "demos",
-    )
+
+    if not is_disk_run:
+        net.download_files_to_dir_in_parallel(
+            [demo.download_url for demo in missing_demos],
+            "demos",
+        )
 
     # checksums, parse, compress
     subprocess.run(["bash", "process_demos.sh", "demos"])
@@ -175,6 +183,30 @@ def find_missing_demos(mode: str, keep_count: int) -> list[hub.Demo]:
     ]
 
     return demo_calc.calc_missing_demos(db_demos, server_demos, keep_count)
+
+
+def get_demos_from_disk(mode: str, qtv_address: str) -> list[hub.Demo]:
+    # get filenames from /demos dir
+    filenames = [
+        filename
+        for filename in (os.listdir("demos"))
+        if filename.startswith(f"{mode}_") and filename.endswith(".mvd")
+    ]
+
+    # convert to hub.Demo
+    demos = []
+
+    for filename in filenames:
+        # get timestamp from filename with a format of 4on4_com_vs_fsr[dm2]20240105-0105
+        file_ts = filename.split("]")[1]
+        timestamp = f"{file_ts[:4]}-{file_ts[4:6]}-{file_ts[6:8]}T{file_ts[9:11]}:{file_ts[11:13]}:00Z"
+
+        demo = hub.Demo(
+            filename=filename, download_url=f"", time=timestamp, qtv_address=qtv_address
+        )
+        demos.append(demo)
+
+    return demos
 
 
 @attr.define
