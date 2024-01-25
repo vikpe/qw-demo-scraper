@@ -12,6 +12,7 @@ def main():
             ModeSettings("2on2", 300),
             ModeSettings("4on4", 4800),
             ModeSettings("ctf", 800),
+            ModeSettings("wipeout", 50),
         ],
     )
 

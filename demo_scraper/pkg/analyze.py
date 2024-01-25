@@ -27,6 +27,7 @@ def format_duration(seconds: float) -> str:
 
 def min_duration_per_mode(mode: str) -> int:
     min_minutes_per_mode = {
+        "wipeout": 1,
         "ffa": 5,
         "ctf": 5,
         "1on1": 10,
