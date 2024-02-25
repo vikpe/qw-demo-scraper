@@ -8,11 +8,11 @@ def main():
 
     app = ScrapeApp(
         [
-            ModeSettings("1on1", 800),
-            ModeSettings("2on2", 300),
+            ModeSettings("1on1", 1000),
+            ModeSettings("2on2", 600),
             ModeSettings("4on4", 4800),
             ModeSettings("ctf", 800),
-            ModeSettings("wipeout", 50),
+            ModeSettings("wipeout", 75),
         ],
     )
 
